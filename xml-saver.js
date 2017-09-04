@@ -66,6 +66,7 @@ function parseElsetInput () {
       var tle1 = filteredElsets[i * 2];
       var tle2 = filteredElsets[i * 2 + 1];
       var scc = pad(tle1.substr(2, 5).trim(), 5);
+      var elsetNum = tle1.substr(64, 4).trim();
 
       var satrec = satellite.twoline2satrec( // perform and store sat init calcs
                   tle1, tle2);
@@ -85,7 +86,7 @@ function parseElsetInput () {
         apogee: apogee,
         perigee: perigee,
         period: period,
-        elset: 74});
+        elset: elsetNum});
     }
     satInfoArray.sort(function (a, b) { return a.satno - b.satno; });
     // console.log(satInfoArray);
@@ -164,6 +165,10 @@ function makeXML () {
       var timeText = document.createTextNode(looksArray[i].time);
       time.appendChild(timeText);
 
+      var unix = document.createElement('unix');
+      var unixText = document.createTextNode(looksArray[i].unix);
+      unix.appendChild(unixText);
+
       var az = document.createElement('az');
       var azText = document.createTextNode(looksArray[i].az);
       az.appendChild(azText);
@@ -180,6 +185,7 @@ function makeXML () {
       var riseText = document.createTextNode(looksArray[i].rise);
       rise.appendChild(riseText);
       pass.appendChild(time);
+      pass.appendChild(unix);
       pass.appendChild(az);
       pass.appendChild(el);
       pass.appendChild(rng);
@@ -266,7 +272,8 @@ function getlookangles (tle1, tle2) {
         if (!((azimuth1 >= obsminaz || azimuth1 <= obsmaxaz) && (elevation1 >= obsminel && elevation1 <= obsmaxel) && (rangeSat1 <= obsmaxrange && rangeSat1 >= obsminrange))) {
           looksArray.push({
             scc: scc,
-            time: now,
+            time: now.toISOString(),
+            unix: new Date(now).getTime() / 1000,
             az: azimuth.toFixed(0),
             el: elevation.toFixed(1),
             rng: rangeSat.toFixed(0),
@@ -295,7 +302,8 @@ function getlookangles (tle1, tle2) {
           if (!((azimuth1 >= obsminaz || azimuth1 <= obsmaxaz) && (elevation1 >= obsminel && elevation1 <= obsmaxel) && (rangeSat1 <= obsmaxrange && rangeSat1 >= obsminrange))) {
             looksArray.push({
               scc: scc,
-              time: now,
+              time: now.toISOString(),
+              unix: new Date(now).getTime() / 1000,
               az: azimuth.toFixed(0),
               el: elevation.toFixed(1),
               rng: rangeSat.toFixed(0),
