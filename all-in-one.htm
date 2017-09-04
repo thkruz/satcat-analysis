@@ -250,7 +250,14 @@
       })();
 
       var blob = new Blob([xml.innerHTML], {type: 'text/plain;charset=utf-8'});
-      saveAs(blob, 'variable.txt');
+      var today = new Date();
+      var year = today.getUTCFullYear();
+      var start = new Date(today.getFullYear(), 0, 0);
+      var diff = today - start;
+      var oneDay = 1000 * 60 * 60 * 24;
+      var day = Math.floor(diff / oneDay);
+      var hour = today.getUTCHours();
+      saveAs(blob, 'SatLooks_' + year.toString() + '_' + day.toString() + '_' + hour.toString() + '.txt');
     }
 
     function getlookangles (tle1, tle2) {
