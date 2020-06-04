@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- saved from url=(0014)about:internet -->
 <html>
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -76,7 +77,113 @@
 
       To extend or renew this license, please contact Theodore Kruczek at theodore.kruczek@gmail.com
       */
-      function pad(e,a){return e.length<a?pad("0"+e,a):e}function openFile(e){var a=e.target,t=new FileReader;t.onload=function(){elsetInput=t.result,parseElsetInput(),makeXML();var e=document.getElementById("output");e.innerText=JSON.stringify(satInfoArray),e.innerHTML+="<br><br>",e.innerText+=JSON.stringify(looksArray)},t.readAsText(a.files[0]),document.getElementById("wrap1").style.display="none",document.getElementById("wrap2").style.display="block"}function parseElsetInput(){var e=document.getElementById("posnegList");e=e.value,posneg=e.split(","),elsetInput=elsetInput.split("\n");for(var a=[],t=0;t<elsetInput.length/2;t++)for(var n=elsetInput[2*t],o=pad(n.substr(2,5).trim(),5),r=0;r<posneg.length;r++)o===posneg[r]&&(a.push(elsetInput[2*t]),a.push(elsetInput[2*t+1]));numSats=a.length/2,function(){for(var e=0;e<numSats;e++){var t=a[2*e],n=a[2*e+1],o=pad(t.substr(2,5).trim(),5),r=t.substr(64,4).trim(),l=satellite.twoline2satrec(t,n),s=l.inclo*RAD2DEG,i=l.ecco,d=60*l.no*24/TAU,m=Math.pow(8681663.653/d,2/3),c=m*(1+i)-RADIUS_OF_EARTH,p=m*(1-i)-RADIUS_OF_EARTH,u=MINUTES_PER_DAY/d;satInfoArray.push({satno:o,inc:s,e:i,meanmo:d,apogee:c,perigee:p,period:u,elset:r})}satInfoArray.sort(function(e,a){return e.satno-a.satno})}(),function(){for(var e=0;e<numSats;e++){getlookangles(a[2*e],a[2*e+1])}looksArray.sort(function(e,a){return e.time-a.time}),looksAllArray.sort(function(e,a){return e.time-a.time})}()}function makeXML(){var e=document.createElement("xml"),a=document.createElement("xmlRoot");e.appendChild(a),function(){for(var e=document.createElement("satinfo"),t=0;t<satInfoArray.length;t++){var n=document.createElement("sat"),o=document.createElement("satno"),r=document.createTextNode(satInfoArray[t].satno);o.appendChild(r);var l=document.createElement("inc"),s=document.createTextNode(satInfoArray[t].inc);l.appendChild(s);var i=document.createElement("e"),d=document.createTextNode(satInfoArray[t].e);i.appendChild(d);var m=document.createElement("apogee"),c=document.createTextNode(satInfoArray[t].apogee);m.appendChild(c);var p=document.createElement("perigee"),u=document.createTextNode(satInfoArray[t].perigee);p.appendChild(u);var g=document.createElement("meanmo"),b=document.createTextNode(satInfoArray[t].meanmo);g.appendChild(b);var h=document.createElement("period"),x=document.createTextNode(satInfoArray[t].period);h.appendChild(x);var A=document.createElement("elset"),C=document.createTextNode(satInfoArray[t].elset);A.appendChild(C),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),n.appendChild(h),n.appendChild(A),e.appendChild(n)}a.appendChild(e)}(),function(){for(var e=document.createElement("looks"),t=0;t<looksArray.length;t++){var n=document.createElement("pass"),o=document.createElement("satno2"),r=document.createTextNode(looksArray[t].scc);o.appendChild(r);var l=document.createElement("time"),s=document.createTextNode(looksArray[t].time);l.appendChild(s);var i=document.createElement("unix"),d=document.createTextNode(looksArray[t].unix);i.appendChild(d);var m=document.createElement("az"),c=document.createTextNode(looksArray[t].az);m.appendChild(c);var p=document.createElement("el"),u=document.createTextNode(looksArray[t].el);p.appendChild(u);var g=document.createElement("rng"),b=document.createTextNode(looksArray[t].rng);g.appendChild(b);var h=document.createElement("rise"),x=document.createTextNode(looksArray[t].rise);h.appendChild(x);var A=document.createElement("margF"),C=document.createTextNode(looksArray[t].margFast);A.appendChild(C);var T=document.createElement("margE"),E=document.createTextNode(looksArray[t].margEl);T.appendChild(E);var f=document.createElement("margT"),v=document.createTextNode(looksArray[t].margTIC);f.appendChild(v);var y=document.createElement("farP"),I=document.createTextNode(looksArray[t].farPass);y.appendChild(I);var z=document.createElement("fenceT"),k=document.createTextNode(looksArray[t].fenceType);z.appendChild(k);var D=document.createElement("farP"),U=document.createTextNode(looksArray[t].notKeyed);D.appendChild(U),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),n.appendChild(h),n.appendChild(A),n.appendChild(T),n.appendChild(f),n.appendChild(y),n.appendChild(z),n.appendChild(D),e.appendChild(n)}a.appendChild(e)}(),function(){for(var e=document.createElement("looksAll"),t=0;t<looksAllArray.length;t++){var n=document.createElement("pass"),o=document.createElement("satno3"),r=document.createTextNode(looksAllArray[t].scc);o.appendChild(r);var l=document.createElement("time"),s=document.createTextNode(looksAllArray[t].time);l.appendChild(s);var i=document.createElement("unix"),d=document.createTextNode(looksAllArray[t].unix);i.appendChild(d);var m=document.createElement("az"),c=document.createTextNode(looksAllArray[t].az);m.appendChild(c);var p=document.createElement("el"),u=document.createTextNode(looksAllArray[t].el);p.appendChild(u);var g=document.createElement("rng"),b=document.createTextNode(looksAllArray[t].rng);g.appendChild(b),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),e.appendChild(n)}a.appendChild(e)}(),document.getElementById("wrap2").style.display="none",document.getElementById("wrap3").style.display="block";var t=new Blob([e.innerHTML],{type:"text/plain;charset=utf-8"}),n=new Date,o=n.getUTCFullYear(),r=new Date(n.getFullYear(),0,0),l=n-r,s=Math.floor(l/864e5),i=n.getUTCHours();saveAs(t,"SatLooks_"+o.toString()+"_"+s.toString()+"_"+i.toString()+".xml")}function getlookangles(e,a){function t(e,a){"use strict";var t=new Date;return t.setTime(Number(a)+e),t}function n(e){latitude=e.lat,longitude=e.long,height=e.hei,obsminaz=e.obsminaz,obsmaxaz=e.obsmaxaz,obsminel=e.obsminel,obsmaxel=e.obsmaxel,obsminrange=e.obsminrange,obsmaxrange=e.obsmaxrange,observerGd={longitude:longitude*DEG2RAD,latitude:latitude*DEG2RAD,height:1*height}}function o(e,a,t,n,o,r){"use strict";return 367*e-Math.floor(7*(e+Math.floor((a+9)/12))*.25)+Math.floor(275*a/9)+t+1721013.5+((r/60+o)/60+n)/24}var r=document.getElementById("selectSensor");r=parseInt(r.options[r.selectedIndex].value),function(e){switch(e){case 0:n({lat:41.754785,long:-70.539151,hei:.060966,obsminaz:345,obsmaxaz:229,obsminel:2,obsmaxel:85,obsminrange:200,obsmaxrange:5556});break;case 1:n({lat:64.290556,long:-149.186944,hei:.175,obsminaz:182,obsmaxaz:66,obsminel:2,obsmaxel:85,obsminrange:200,obsmaxrange:5556});break;case 2:n({lat:39.136064,long:-121.351237,hei:.112,obsminaz:124,obsmaxaz:8,obsminel:2,obsmaxel:85,obsminrange:200,obsmaxrange:5556});break;case 3:n({lat:48.724567,long:-97.899755,hei:.352,obsminaz:296,obsmaxaz:80,obsminel:1.5,obsmaxel:95,obsminrange:200,obsmaxrange:3300});break;case 4:n({lat:54.361758,long:-.670051,hei:.26,obsminaz:0,obsmaxaz:360,obsminel:2,obsmaxel:85,obsminrange:200,obsmaxrange:5556});break;case 5:n({lat:30.572411,long:-86.214836,hei:.039,obsminaz:118,obsmaxaz:242,obsminel:2,obsmaxel:105,obsminrange:200,obsmaxrange:6e4});break;case 6:n({lat:76.570322,long:-68.299211,hei:.392,obsminaz:295,obsmaxaz:179,obsminel:2,obsmaxel:85,obsminrange:200,obsmaxrange:5556})}observerGd={longitude:longitude*DEG2RAD,latitude:latitude*DEG2RAD,height:1*height}}(r);var l=satellite.twoline2satrec(e,a),s=l.ecco,i=60*l.no*24/TAU;if(!(Math.pow(8681663.653/i,2/3)*(1-s)-RADIUS_OF_EARTH>obsmaxrange)){l.satnum=pad(e.substr(2,5).trim(),5);for(var d,m=!1,c=!1,p=!1,u=!0,g=!1,b=obsmaxrange,h=1,x=(l.no,0);x<172800;x+=5)!function(e,a){var n=t(1e3*e,Date.now()),r=!1,l=a.satnum,s=o(n.getUTCFullYear(),n.getUTCMonth()+1,n.getUTCDate(),n.getUTCHours(),n.getUTCMinutes(),n.getUTCSeconds());s+=1.15741e-8*n.getUTCMilliseconds();var i,x,A,C,T,E=satellite.gstime(s),f=(s-a.jdsatepoch)*MINUTES_PER_DAY,v=satellite.sgp4(a,f);if(void 0!==v.position&&(i=satellite.eciToEcf(v.position,E),x=satellite.ecfToLookAngles(observerGd,i),A=x.azimuth*RAD2DEG,C=x.elevation*RAD2DEG,T=x.rangeSat,(r=obsminaz>obsmaxaz?(A>=obsminaz||A<=obsmaxaz)&&C>=obsminel&&C<=obsmaxel&&T<=obsmaxrange&&T>=obsminrange:A>=obsminaz&&A<=obsmaxaz&&C>=obsminel&&C<=obsmaxel&&T<=obsmaxrange&&T>=obsminrange)&&r)){var y=t(-5e3,n),I=o(y.getUTCFullYear(),y.getUTCMonth()+1,y.getUTCDate(),y.getUTCHours(),y.getUTCMinutes(),y.getUTCSeconds());I+=1.15741e-8*y.getUTCMilliseconds();var z,k,D,U,N,S=satellite.gstime(I),R=(I-a.jdsatepoch)*MINUTES_PER_DAY,M=satellite.sgp4(a,R);if(void 0===M.position)return;if(z=satellite.eciToEcf(M.position,S),k=satellite.ecfToLookAngles(observerGd,z),D=k.azimuth*RAD2DEG,U=k.elevation*RAD2DEG,N=k.rangeSat,isInView1=obsminaz>obsmaxaz?(D>=obsminaz||D<=obsmaxaz)&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange:D>=obsminaz&&D<=obsmaxaz&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange,isInView1){if(y=t(5e3,n),I=o(y.getUTCFullYear(),y.getUTCMonth()+1,y.getUTCDate(),y.getUTCHours(),y.getUTCMinutes(),y.getUTCSeconds()),I+=1.15741e-8*y.getUTCMilliseconds(),S=satellite.gstime(I),R=(I-a.jdsatepoch)*MINUTES_PER_DAY,M=satellite.sgp4(a,R),void 0===M.position)return;if(z=satellite.eciToEcf(M.position,S),k=satellite.ecfToLookAngles(observerGd,z),D=k.azimuth*RAD2DEG,U=k.elevation*RAD2DEG,N=k.rangeSat,isInView1=obsminaz>obsmaxaz?(D>=obsminaz||D<=obsmaxaz)&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange:D>=obsminaz&&D<=obsmaxaz&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange,!isInView1)return n-d<18e4&&(p=!0),b>=2750&&(g=!0),C>3&&(h=0),looksArray.push({scc:l,time:n.toISOString(),unix:new Date(n).getTime()/1e3,az:A.toFixed(0),el:C.toFixed(1),rng:T.toFixed(0),rise:1,margFast:m,margEl:u,margTIC:p,farPass:g,fenceType:h,notKeyed:c}),m=!1,c=!1,p=!1,u=!0,g=!1,b=obsmaxrange,void(h=1)}else C<=4&&(u=!0),C>3&&(c=!0,h=0),d=n,looksArray.push({scc:l,time:n.toISOString(),unix:new Date(n).getTime()/1e3,az:A.toFixed(0),el:C.toFixed(1),rng:T.toFixed(0),rise:0});T<=750&&(m=!0),C>4&&(u=!1),b>T&&(b=T),looksAllArray.push({scc:l,time:n.toISOString(),unix:new Date(n).getTime()/1e3,az:A.toFixed(0),el:C.toFixed(1),rng:T.toFixed(0)})}}(x,l)}}var TAU=2*Math.PI,RADIUS_OF_EARTH=6371,RAD2DEG=360/TAU,DEG2RAD=TAU/360,MINUTES_PER_DAY=1440,elsetInput,numSats,satInfoArray=[],looksArray=[],looksAllArray=[],posneg=[],latitude,longitude,height,obsminaz,obsmaxaz,obsminel,obsmaxel,obsminrange,obsmaxrange,observerGd={};
+
+      function setSensor (sensor) {
+        switch (sensor) {
+          case 0:// Cod
+            setobs({
+              lat: 41.754785,
+              long: -70.539151,
+              hei: 0.060966, // Open Street Maps
+              obsminaz: 345, // 347 - 2
+              obsmaxaz: 229, // 227 + 2
+              obsminel: 2, // 3
+              obsmaxel: 85,
+              obsminrange: 200,
+              obsmaxrange: 5556
+            });
+            break;
+          case 1:// Clear
+            setobs({
+              lat: 64.290556,
+              long: -149.186944,
+              hei: 0.1750, // Open Street Maps
+              obsminaz: 182, // 184 -2
+              obsmaxaz: 66, // 64 + 2
+              obsminel: 2, // 3
+              obsmaxel: 85,
+              obsminrange: 200,
+              obsmaxrange: 5556
+            });
+            break;
+          case 2:// Beale
+            setobs({
+              lat: 39.136064,
+              long: -121.351237,
+              hei: 0.1120, // Open Street Maps
+              obsminaz: 124, // 126 - 2
+              obsmaxaz: 8, // 6 + 2
+              obsminel: 2, // 3
+              obsmaxel: 85,
+              obsminrange: 200,
+              obsmaxrange: 5556
+            });
+            break;
+          case 3:// Cavalier
+            setobs({
+              lat: 48.724567,
+              long: -97.899755,
+              hei: 0.3520, // Open Street Maps
+              obsminaz: 296, // 298 - 2
+              obsmaxaz: 80, // 78 + 2
+              obsminel: 1.5, // 1.9
+              obsmaxel: 95,
+              obsminrange: 200,
+              obsmaxrange: 3300 // TODO: Double check this
+            });
+            break;
+          case 4:// Fylingdales
+            setobs({
+              lat: 54.361758,
+              long: -0.670051,
+              hei: 0.2600, // Open Street Maps
+              obsminaz: 0,
+              obsmaxaz: 360,
+              obsminel: 2, // 3
+              obsmaxel: 85,
+              obsminrange: 200,
+              obsmaxrange: 5556
+            });
+            break;
+          case 5:// Eglin
+            setobs({
+              lat: 30.572411,
+              long: -86.214836,
+              hei: 0.0390, // Open Street Maps
+              obsminaz: 118, // 120
+              obsmaxaz: 242, // 242
+              obsminel: 2, // 3
+              obsmaxel: 105,
+              obsminrange: 200,
+              obsmaxrange: 60000
+            });
+            break;
+          case 6:// Thule
+            setobs({
+              lat: 76.570322,
+              long: -68.299211,
+              hei: 0.3920, // Open Street Maps
+              obsminaz: 295, // 297 - 2
+              obsmaxaz: 179, // 177 + 2
+              obsminel: 2, // 3
+              obsmaxel: 85,
+              obsminrange: 200,
+              obsmaxrange: 5556
+            });
+            break;
+        }
+        observerGd = {                        // Array to calculate look angles in propagate()
+          longitude: longitude * DEG2RAD,
+          latitude: latitude * DEG2RAD,
+          height: height * 1                  // Converts from string to number TODO: Find correct way to convert string to integer
+        };
+      }
+
+      var passTicCriteria = 3; // 3 Minute Minimum Time in Coverage
+      var farPassCriteria = 2750; // Far Pass Minimum Range
+      var elevationCriteria = 4; // Minimum Elevation Criteria
+
+      var elsetInput,numSats,latitude,longitude,height,obsminaz,obsmaxaz,obsminel,obsmaxel,obsminrange,obsmaxrange,TAU=2*Math.PI,RADIUS_OF_EARTH=6371,RAD2DEG=360/TAU,DEG2RAD=TAU/360,MINUTES_PER_DAY=1440,satInfoArray=[],looksArray=[],looksAllArray=[],posneg=[],observerGd={};function pad(e,t){return e.length<t?pad("0"+e,t):e}var objectToCSVRow=function(e){var t=new Array;for(var a in e){var n=(null===e[a]?"":e[a].toString()).replace(/"/g,'""');n='"'+n+'"',t.push(n)}return t.join(",")+"\r\n"},exportToCSV=function(e){if(e.length){var t="";t+=objectToCSVRow(Object.keys(e[1])),e.forEach(function(e){t+=objectToCSVRow(e)});var a=new Blob([t],{type:"text/csv;charset=utf-8"});saveAs(a,"lookAngles.csv")}};function openFile(e){var t=e.target,a=new FileReader;a.onload=function(){elsetInput=a.result,parseElsetInput(),makeXML();var e=document.getElementById("output");e.innerText=JSON.stringify(satInfoArray),e.innerHTML+="<br><br>",e.innerText+=JSON.stringify(looksArray)},a.readAsText(t.files[0]),document.getElementById("wrap1").style.display="none",document.getElementById("wrap2").style.display="block"}function parseElsetInput(){var e=document.getElementById("posnegList");e=e.value,posneg=e.split(","),elsetInput=elsetInput.split("\n");for(var t=[],a=0;a<elsetInput.length/2;a++)for(var n=pad(elsetInput[2*a].substr(2,5).trim(),5),o=0;o<posneg.length;o++)n===posneg[o]&&(t.push(elsetInput[2*a]),t.push(elsetInput[2*a+1]));numSats=t.length/2,function(){for(var e=0;e<numSats;e++){var a=t[2*e],n=t[2*e+1],o=pad(a.substr(2,5).trim(),5),r=a.substr(64,4).trim(),l=satellite.twoline2satrec(a,n),s=l.inclo*RAD2DEG,i=l.ecco,d=60*l.no*24/TAU,m=Math.pow(8681663.653/d,2/3),c=m*(1+i)-RADIUS_OF_EARTH,p=m*(1-i)-RADIUS_OF_EARTH,u=MINUTES_PER_DAY/d;satInfoArray.push({satno:o,inc:s,e:i,meanmo:d,apogee:c,perigee:p,period:u,elset:r})}satInfoArray.sort(function(e,t){return e.satno-t.satno})}(),function(){for(var e=0;e<numSats;e++){getlookangles(t[2*e],t[2*e+1])}looksArray.sort(function(e,t){return e.time-t.time}),looksAllArray.sort(function(e,t){return e.time-t.time})}()}function makeXML(){var e=document.createElement("xml"),t=document.createElement("xmlRoot");e.appendChild(t),function(){for(var e=document.createElement("satinfo"),a=0;a<satInfoArray.length;a++){var n=document.createElement("sat"),o=document.createElement("satno"),r=document.createTextNode(satInfoArray[a].satno);o.appendChild(r);var l=document.createElement("inc"),s=document.createTextNode(satInfoArray[a].inc);l.appendChild(s);var i=document.createElement("e"),d=document.createTextNode(satInfoArray[a].e);i.appendChild(d);var m=document.createElement("apogee"),c=document.createTextNode(satInfoArray[a].apogee);m.appendChild(c);var p=document.createElement("perigee"),u=document.createTextNode(satInfoArray[a].perigee);p.appendChild(u);var g=document.createElement("meanmo"),h=document.createTextNode(satInfoArray[a].meanmo);g.appendChild(h);var C=document.createElement("period"),A=document.createTextNode(satInfoArray[a].period);C.appendChild(A);var T=document.createElement("elset"),x=document.createTextNode(satInfoArray[a].elset);T.appendChild(x),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),n.appendChild(C),n.appendChild(T),e.appendChild(n)}t.appendChild(e)}(),function(){for(var e=document.createElement("looks"),a=0;a<looksArray.length;a++){var n=document.createElement("pass"),o=document.createElement("satno2"),r=document.createTextNode(looksArray[a].scc);o.appendChild(r);var l=document.createElement("time"),s=document.createTextNode(looksArray[a].time);l.appendChild(s);var i=document.createElement("unix"),d=document.createTextNode(looksArray[a].unix);i.appendChild(d);var m=document.createElement("az"),c=document.createTextNode(looksArray[a].az);m.appendChild(c);var p=document.createElement("el"),u=document.createTextNode(looksArray[a].el);p.appendChild(u);var g=document.createElement("rng"),h=document.createTextNode(looksArray[a].rng);g.appendChild(h);var C=document.createElement("rise"),A=document.createTextNode(looksArray[a].rise);C.appendChild(A);var T=document.createElement("margF"),x=document.createTextNode(looksArray[a].margFast);T.appendChild(x);var b=document.createElement("margE"),E=document.createTextNode(looksArray[a].margEl);b.appendChild(E);var f=document.createElement("margT"),v=document.createTextNode(looksArray[a].margTIC);f.appendChild(v);var y=document.createElement("farP"),I=document.createTextNode(looksArray[a].farPass);y.appendChild(I);var k=document.createElement("fenceT"),D=document.createTextNode(looksArray[a].fenceType);k.appendChild(D);var S=document.createElement("nkFence"),U=document.createTextNode(looksArray[a].notKeyed);S.appendChild(U),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),n.appendChild(C),n.appendChild(T),n.appendChild(b),n.appendChild(f),n.appendChild(y),n.appendChild(k),n.appendChild(S),e.appendChild(n)}t.appendChild(e)}(),function(){for(var e=document.createElement("looksAll"),a=0;a<looksAllArray.length;a++){var n=document.createElement("pass"),o=document.createElement("satno3"),r=document.createTextNode(looksAllArray[a].scc);o.appendChild(r);var l=document.createElement("time"),s=document.createTextNode(looksAllArray[a].time);l.appendChild(s);var i=document.createElement("unix"),d=document.createTextNode(looksAllArray[a].unix);i.appendChild(d);var m=document.createElement("az"),c=document.createTextNode(looksAllArray[a].az);m.appendChild(c);var p=document.createElement("el"),u=document.createTextNode(looksAllArray[a].el);p.appendChild(u);var g=document.createElement("rng"),h=document.createTextNode(looksAllArray[a].rng);g.appendChild(h),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),e.appendChild(n)}t.appendChild(e)}(),document.getElementById("wrap2").style.display="none",document.getElementById("wrap3").style.display="block";var a=new Blob([e.innerHTML],{type:"text/plain;charset=utf-8"}),n=new Date,o=n.getUTCFullYear(),r=n-new Date(n.getFullYear(),0,0),l=Math.floor(r/864e5),s=n.getUTCHours();saveAs(a,"SatLooks_"+o.toString()+"_"+l.toString()+"_"+s.toString()+".xml"),exportToCSV(looksArray)}function getlookangles(e,t){var a=document.getElementById("selectSensor");a=parseInt(a.options[a.selectedIndex].value),setSensor(a);var n=satellite.twoline2satrec(e,t),o=n.ecco,r=60*n.no*24/TAU;if(!(Math.pow(8681663.653/r,2/3)*(1-o)-RADIUS_OF_EARTH>obsmaxrange)){n.satnum=pad(e.substr(2,5).trim(),5);for(var l,s=!1,i=!1,d=!1,m=!0,c=!1,p=obsmaxrange,u=1,g=(n.no,0);g<172800;g+=5)h(g,n)}function h(e,t){var a=C(1e3*e,Date.now()),n=!1,o=t.satnum,r=A(a.getUTCFullYear(),a.getUTCMonth()+1,a.getUTCDate(),a.getUTCHours(),a.getUTCMinutes(),a.getUTCSeconds());r+=1.15741e-8*a.getUTCMilliseconds();var g,h,T,x,b,E=satellite.gstime(r),f=(r-t.jdsatepoch)*MINUTES_PER_DAY,v=satellite.sgp4(t,f);if(void 0!==v.position&&(g=satellite.eciToEcf(v.position,E),T=(h=satellite.ecfToLookAngles(observerGd,g)).azimuth*RAD2DEG,x=h.elevation*RAD2DEG,b=h.rangeSat,(n=obsminaz>obsmaxaz?(T>=obsminaz||T<=obsmaxaz)&&x>=obsminel&&x<=obsmaxel&&b<=obsmaxrange&&b>=obsminrange:T>=obsminaz&&T<=obsmaxaz&&x>=obsminel&&x<=obsmaxel&&b<=obsmaxrange&&b>=obsminrange)&&n)){var y=C(-5e3,a),I=A(y.getUTCFullYear(),y.getUTCMonth()+1,y.getUTCDate(),y.getUTCHours(),y.getUTCMinutes(),y.getUTCSeconds());I+=1.15741e-8*y.getUTCMilliseconds();var k,D,S,U,N,z=satellite.gstime(I),R=(I-t.jdsatepoch)*MINUTES_PER_DAY,w=satellite.sgp4(t,R);if(void 0===w.position)return;if(k=satellite.eciToEcf(w.position,z),S=(D=satellite.ecfToLookAngles(observerGd,k)).azimuth*RAD2DEG,U=D.elevation*RAD2DEG,N=D.rangeSat,isInView1=obsminaz>obsmaxaz?(S>=obsminaz||S<=obsmaxaz)&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange:S>=obsminaz&&S<=obsmaxaz&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange,isInView1){if(I=A((y=C(5e3,a)).getUTCFullYear(),y.getUTCMonth()+1,y.getUTCDate(),y.getUTCHours(),y.getUTCMinutes(),y.getUTCSeconds()),I+=1.15741e-8*y.getUTCMilliseconds(),z=satellite.gstime(I),R=(I-t.jdsatepoch)*MINUTES_PER_DAY,void 0===(w=satellite.sgp4(t,R)).position)return;if(k=satellite.eciToEcf(w.position,z),S=(D=satellite.ecfToLookAngles(observerGd,k)).azimuth*RAD2DEG,U=D.elevation*RAD2DEG,N=D.rangeSat,isInView1=obsminaz>obsmaxaz?(S>=obsminaz||S<=obsmaxaz)&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange:S>=obsminaz&&S<=obsmaxaz&&U>=obsminel&&U<=obsmaxel&&N<=obsmaxrange&&N>=obsminrange,!isInView1)return a-l<60*passTicCriteria*1e3&&(d=!0),p>=farPassCriteria&&(c=!0),x>3&&(u=0),looksArray.push({scc:o,time:a.toISOString(),unix:new Date(a).getTime()/1e3,az:T.toFixed(0),el:x.toFixed(1),rng:b.toFixed(0),rise:1,margFast:s,margEl:m,margTIC:d,farPass:c,fenceType:u,notKeyed:i}),s=!1,i=!1,d=!1,m=!0,c=!1,p=obsmaxrange,void(u=1)}else x<=elevationCriteria&&(m=!0),x>3&&(i=!0,u=0),l=a,looksArray.push({scc:o,time:a.toISOString(),unix:new Date(a).getTime()/1e3,az:T.toFixed(0),el:x.toFixed(1),rng:b.toFixed(0),rise:0});b<=750&&(s=!0),x>4&&(m=!1),p>b&&(p=b),looksAllArray.push({scc:o,time:a.toISOString(),unix:new Date(a).getTime()/1e3,az:T.toFixed(0),el:x.toFixed(1),rng:b.toFixed(0)})}}function C(e,t){"use strict";var a=new Date;return a.setTime(Number(t)+e),a}function A(e,t,a,n,o,r){"use strict";return 367*e-Math.floor(7*(e+Math.floor((t+9)/12))*.25)+Math.floor(275*t/9)+a+1721013.5+((r/60+o)/60+n)/24}}function setobs(e){latitude=e.lat,longitude=e.long,height=e.hei,obsminaz=e.obsminaz,obsmaxaz=e.obsmaxaz,obsminel=e.obsminel,obsmaxel=e.obsmaxel,obsminrange=e.obsminrange,obsmaxrange=e.obsmaxrange,observerGd={longitude:longitude*DEG2RAD,latitude:latitude*DEG2RAD,height:1*height}}
     </script>
     <title>SPADE Look Angle Tool</title>
     <style>
