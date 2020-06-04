@@ -5,12 +5,19 @@ Permission is hereby granted, free of charge, to all military, government,
 and contractors of the:
 
 6th Space Warning Squadron, located at Cape Cod Air Force Station, MA
+
 7th Space Warning Squadron, located at Beale Air Force Base, CA
+
 10th Space Warning Squadron, located at Cavalier Air Force Base, ND
+
 12th Space Warning Squadron, located at Thule Air Force Base, Greenland
+
 13th Space Warning Squadron, located at Clear Air Force Station, AK
+
 16th Space Warning Squadron, located at Eglin Air Force Base, FL
+
 213th Space Warning Squadron, located at Clear Air Force Station, AK
+
 RAF Fylingdales, located at Pickering, North Yorkshire, United Kingdom
 
 obtaining a copy of this software and associated documentation files
