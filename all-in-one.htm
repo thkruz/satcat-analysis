@@ -196,10 +196,17 @@
           background: RGB(242,242,242);
       }
       #header {
-        background: #00308F
+        background: #00308F;
         color: white;
         margin: 0;
         padding: 0 1em;
+      }
+      #footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
       }
       #content {
         padding-left: 1em;
@@ -212,7 +219,7 @@
       }
     </style>
   </head>
-  <body onload="window.resizeTo(500,500);">
+  <body onload="window.resizeTo(550,550);">
     <div id="header">
       <h1>SPADE - LOOK ANGLE TOOL</h1>
     </div>
@@ -245,6 +252,10 @@
           <input type='file' accept='text/plain' onchange='openFile(event)'><br>
         </div>
       </div>
+      <div id="footer">
+        <p>
+          Copyright (C) 2016-2020 Theodore Kruczek
+        </p>
       <div id="wrap2">
         <div>
           <h1>Please Wait...</h1>
