@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- saved from url=(0016)https://localhost -->
+<!-- saved from url=(0014)about:internet -->
 <html>
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -189,22 +189,583 @@
       var DEG2RAD = TAU / 360;          // Used to convert degrees to radians
       var MINUTES_PER_DAY = 1440;
 
-      function downloadElset() {
-        url='http://ipv4.download.thinkbroadband.com/5MB.zip';
-        name='Satellite Catalog';
+      // Start Minify Here
+      var elsetInput;
+      var numSats;
+      var satInfoArray = [];
+      var looksArray = [];
+      var looksAllArray = [];
+      var posneg = [];
+      var latitude, longitude, height, obsminaz, obsmaxaz, obsminel, obsmaxel, obsminrange, obsmaxrange;
+      var observerGd = {};
 
-        var link = document.createElement("a");
-        // If you don't know the name or want to use
-        // the webserver default set name = ''
-        link.setAttribute('download', name);
-        link.href = url;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+      function pad (str, max) {
+        return str.length < max ? pad('0' + str, max) : str;
+      }
+      var objectToCSVRow = function(dataObject) {
+        var dataArray = new Array;
+        for (var o in dataObject) {
+            var innerValue = dataObject[o]===null?'':dataObject[o].toString();
+            var result = innerValue.replace(/"/g, '""');
+            result = '"' + result + '"';
+            dataArray.push(result);
+        }
+        return dataArray.join(',') + '\r\n';
       }
 
-      var elsetInput,numSats,latitude,longitude,height,obsminaz,obsmaxaz,obsminel,obsmaxel,obsminrange,obsmaxrange,satInfoArray=[],looksArray=[],looksAllArray=[],posneg=[],observerGd={};function pad(e,t){return e.length<t?pad("0"+e,t):e}var objectToCSVRow=function(e){var t=new Array;for(var a in e){var n=(null===e[a]?"":e[a].toString()).replace(/"/g,'""');n='"'+n+'"',t.push(n)}return t.join(",")+"\r\n"},exportToCSV=function(e){if(e.length){var t="";t+=objectToCSVRow(Object.keys(e[1])),e.forEach(function(e){t+=objectToCSVRow(e)});var a=new Blob([t],{type:"text/csv;charset=utf-8"});saveAs(a,"lookAngles.csv")}};function openFile(e){var t=e.target,a=new FileReader;a.onload=function(){elsetInput=a.result,parseElsetInput(),makeXML();var e=document.getElementById("output");e.innerText=JSON.stringify(satInfoArray),e.innerHTML+="<br><br>",e.innerText+=JSON.stringify(looksArray)},a.readAsText(t.files[0]),document.getElementById("wrap1").style.display="none",document.getElementById("wrap2").style.display="block"}function parseElsetInput(){var e=document.getElementById("posnegList");e=e.value,posneg=e.split(","),elsetInput=elsetInput.split("\n");for(var t=[],a=0;a<elsetInput.length/2;a++)for(var n=pad(elsetInput[2*a].substr(2,5).trim(),5),o=0;o<posneg.length;o++)n===posneg[o]&&(t.push(elsetInput[2*a]),t.push(elsetInput[2*a+1]));numSats=t.length/2,function(){for(var e=0;e<numSats;e++){var a=t[2*e],n=t[2*e+1],o=pad(a.substr(2,5).trim(),5),r=a.substr(64,4).trim(),l=satellite.twoline2satrec(a,n),s=l.inclo*RAD2DEG,i=l.ecco,d=60*l.no*24/TAU,m=Math.pow(8681663.653/d,2/3),c=m*(1+i)-RADIUS_OF_EARTH,p=m*(1-i)-RADIUS_OF_EARTH,u=MINUTES_PER_DAY/d;satInfoArray.push({satno:o,inc:s,e:i,meanmo:d,apogee:c,perigee:p,period:u,elset:r})}satInfoArray.sort(function(e,t){return e.satno-t.satno})}(),function(){for(var e=0;e<numSats;e++){getlookangles(t[2*e],t[2*e+1])}looksArray.sort(function(e,t){return e.time-t.time}),looksAllArray.sort(function(e,t){return e.time-t.time})}()}function makeXML(){var e=document.createElement("xml"),t=document.createElement("xmlRoot");e.appendChild(t),function(){for(var e=document.createElement("satinfo"),a=0;a<satInfoArray.length;a++){var n=document.createElement("sat"),o=document.createElement("satno"),r=document.createTextNode(satInfoArray[a].satno);o.appendChild(r);var l=document.createElement("inc"),s=document.createTextNode(satInfoArray[a].inc);l.appendChild(s);var i=document.createElement("e"),d=document.createTextNode(satInfoArray[a].e);i.appendChild(d);var m=document.createElement("apogee"),c=document.createTextNode(satInfoArray[a].apogee);m.appendChild(c);var p=document.createElement("perigee"),u=document.createTextNode(satInfoArray[a].perigee);p.appendChild(u);var g=document.createElement("meanmo"),h=document.createTextNode(satInfoArray[a].meanmo);g.appendChild(h);var C=document.createElement("period"),T=document.createTextNode(satInfoArray[a].period);C.appendChild(T);var x=document.createElement("elset"),A=document.createTextNode(satInfoArray[a].elset);x.appendChild(A),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),n.appendChild(C),n.appendChild(x),e.appendChild(n)}t.appendChild(e)}(),function(){for(var e=document.createElement("looks"),a=0;a<looksArray.length;a++){var n=document.createElement("pass"),o=document.createElement("satno2"),r=document.createTextNode(looksArray[a].scc);o.appendChild(r);var l=document.createElement("time"),s=document.createTextNode(looksArray[a].time);l.appendChild(s);var i=document.createElement("unix"),d=document.createTextNode(looksArray[a].unix);i.appendChild(d);var m=document.createElement("az"),c=document.createTextNode(looksArray[a].az);m.appendChild(c);var p=document.createElement("el"),u=document.createTextNode(looksArray[a].el);p.appendChild(u);var g=document.createElement("rng"),h=document.createTextNode(looksArray[a].rng);g.appendChild(h);var C=document.createElement("rise"),T=document.createTextNode(looksArray[a].rise);C.appendChild(T);var x=document.createElement("margF"),A=document.createTextNode(looksArray[a].margFast);x.appendChild(A);var b=document.createElement("margE"),E=document.createTextNode(looksArray[a].margEl);b.appendChild(E);var f=document.createElement("margT"),v=document.createTextNode(looksArray[a].margTIC);f.appendChild(v);var y=document.createElement("farP"),I=document.createTextNode(looksArray[a].farPass);y.appendChild(I);var k=document.createElement("fenceT"),S=document.createTextNode(looksArray[a].fenceType);k.appendChild(S);var D=document.createElement("nkFence"),N=document.createTextNode(looksArray[a].notKeyed);D.appendChild(N),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),n.appendChild(C),n.appendChild(x),n.appendChild(b),n.appendChild(f),n.appendChild(y),n.appendChild(k),n.appendChild(D),e.appendChild(n)}t.appendChild(e)}(),function(){for(var e=document.createElement("looksAll"),a=0;a<looksAllArray.length;a++){var n=document.createElement("pass"),o=document.createElement("satno3"),r=document.createTextNode(looksAllArray[a].scc);o.appendChild(r);var l=document.createElement("time"),s=document.createTextNode(looksAllArray[a].time);l.appendChild(s);var i=document.createElement("unix"),d=document.createTextNode(looksAllArray[a].unix);i.appendChild(d);var m=document.createElement("az"),c=document.createTextNode(looksAllArray[a].az);m.appendChild(c);var p=document.createElement("el"),u=document.createTextNode(looksAllArray[a].el);p.appendChild(u);var g=document.createElement("rng"),h=document.createTextNode(looksAllArray[a].rng);g.appendChild(h),n.appendChild(o),n.appendChild(l),n.appendChild(i),n.appendChild(m),n.appendChild(p),n.appendChild(g),e.appendChild(n)}t.appendChild(e)}(),document.getElementById("wrap2").style.display="none",document.getElementById("wrap3").style.display="block";var a=new Blob([e.innerHTML],{type:"text/plain;charset=utf-8"}),n=new Date,o=n.getUTCFullYear(),r=new Date(n.getFullYear(),0,0),l=n-r,s=Math.floor(l/864e5),i=n.getUTCHours();saveAs(a,"SatLooks_"+o.toString()+"_"+s.toString()+"_"+i.toString()+".xml")}function getlookangles(e,t){var a=document.getElementById("selectSensor");a=parseInt(a.options[a.selectedIndex].value),setSensor(a);var n=satellite.twoline2satrec(e,t),o=n.ecco,r=60*n.no*24/TAU;if(!(Math.pow(8681663.653/r,2/3)*(1-o)-RADIUS_OF_EARTH>obsmaxrange)){n.satnum=pad(e.substr(2,5).trim(),5);for(var l,s=!1,i=!1,d=!1,m=!0,c=!1,p=obsmaxrange,u=1,g=(MINUTES_PER_DAY,n.no,MINUTES_PER_DAY,TAU,0);g<172800;g+=5)h(g,n)}function h(e,t){var a=C(1e3*e,Date.now()),n=!1,o=t.satnum,r=T(a.getUTCFullYear(),a.getUTCMonth()+1,a.getUTCDate(),a.getUTCHours(),a.getUTCMinutes(),a.getUTCSeconds());r+=1.15741e-8*a.getUTCMilliseconds();var g,h,x,A,b,E=satellite.gstime(r),f=(r-t.jdsatepoch)*MINUTES_PER_DAY,v=satellite.sgp4(t,f);if(void 0!==v.position&&(g=satellite.eciToEcf(v.position,E),x=(h=satellite.ecfToLookAngles(observerGd,g)).azimuth*RAD2DEG,A=h.elevation*RAD2DEG,b=h.rangeSat,(n=obsminaz>obsmaxaz?(x>=obsminaz||x<=obsmaxaz)&&A>=obsminel&&A<=obsmaxel&&b<=obsmaxrange&&b>=obsminrange:x>=obsminaz&&x<=obsmaxaz&&A>=obsminel&&A<=obsmaxel&&b<=obsmaxrange&&b>=obsminrange)&&n)){var y=C(-5e3,a),I=T(y.getUTCFullYear(),y.getUTCMonth()+1,y.getUTCDate(),y.getUTCHours(),y.getUTCMinutes(),y.getUTCSeconds());I+=1.15741e-8*y.getUTCMilliseconds();var k,S,D,N,U,z=satellite.gstime(I),w=(I-t.jdsatepoch)*MINUTES_PER_DAY,R=satellite.sgp4(t,w);if(void 0===R.position)return;if(k=satellite.eciToEcf(R.position,z),D=(S=satellite.ecfToLookAngles(observerGd,k)).azimuth*RAD2DEG,N=S.elevation*RAD2DEG,U=S.rangeSat,isInView1=obsminaz>obsmaxaz?(D>=obsminaz||D<=obsmaxaz)&&N>=obsminel&&N<=obsmaxel&&U<=obsmaxrange&&U>=obsminrange:D>=obsminaz&&D<=obsmaxaz&&N>=obsminel&&N<=obsmaxel&&U<=obsmaxrange&&U>=obsminrange,isInView1){if(I=T((y=C(5e3,a)).getUTCFullYear(),y.getUTCMonth()+1,y.getUTCDate(),y.getUTCHours(),y.getUTCMinutes(),y.getUTCSeconds()),I+=1.15741e-8*y.getUTCMilliseconds(),z=satellite.gstime(I),w=(I-t.jdsatepoch)*MINUTES_PER_DAY,void 0===(R=satellite.sgp4(t,w)).position)return;if(k=satellite.eciToEcf(R.position,z),D=(S=satellite.ecfToLookAngles(observerGd,k)).azimuth*RAD2DEG,N=S.elevation*RAD2DEG,U=S.rangeSat,isInView1=obsminaz>obsmaxaz?(D>=obsminaz||D<=obsmaxaz)&&N>=obsminel&&N<=obsmaxel&&U<=obsmaxrange&&U>=obsminrange:D>=obsminaz&&D<=obsmaxaz&&N>=obsminel&&N<=obsmaxel&&U<=obsmaxrange&&U>=obsminrange,!isInView1)return a-l<60*passTicCriteria*1e3&&(d=!0),p>=farPassCriteria&&(c=!0),A>3&&(s=!0,u=0),looksArray.push({scc:o,time:a.toISOString(),unix:new Date(a).getTime()/1e3,az:x.toFixed(0),el:A.toFixed(1),rng:b.toFixed(0),rise:1,margFast:s,margEl:m,margTIC:d,farPass:c,fenceType:u,notKeyed:i}),s=!1,i=!1,d=!1,m=!0,c=!1,p=obsmaxrange,void(u=1)}else A<=elevationCriteria&&(m=!0),A>3&&(i=!0,u=0),l=a,looksArray.push({scc:o,time:a.toISOString(),unix:new Date(a).getTime()/1e3,az:x.toFixed(0),el:A.toFixed(1),rng:b.toFixed(0),rise:0});A>4&&(m=!1),p>b&&(p=b),looksAllArray.push({scc:o,time:a.toISOString(),unix:new Date(a).getTime()/1e3,az:x.toFixed(0),el:A.toFixed(1),rng:b.toFixed(0)})}}function C(e,t){"use strict";var a=new Date;return a.setTime(Number(t)+e),a}function T(e,t,a,n,o,r){"use strict";return 367*e-Math.floor(7*(e+Math.floor((t+9)/12))*.25)+Math.floor(275*t/9)+a+1721013.5+((r/60+o)/60+n)/24}}function setobs(e){latitude=e.lat,longitude=e.long,height=e.hei,obsminaz=e.obsminaz,obsmaxaz=e.obsmaxaz,obsminel=e.obsminel,obsmaxel=e.obsmaxel,obsminrange=e.obsminrange,obsmaxrange=e.obsmaxrange,observerGd={longitude:longitude*DEG2RAD,latitude:latitude*DEG2RAD,height:1*height}}
+      var exportToCSV = function(arrayOfObjects) {
+
+        if (!arrayOfObjects.length) {
+            return;
+        }
+
+        var csvContent = "";
+
+        // headers
+        csvContent += objectToCSVRow(Object.keys(arrayOfObjects[1]));
+
+        arrayOfObjects.forEach(function(item){
+            csvContent += objectToCSVRow(item);
+        });
+
+        var blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
+        saveAs(blob,'lookAngles.csv')
+      }
+      function openFile (event) {
+        var input = event.target;
+
+        var reader = new FileReader();
+        reader.onload = function () {
+          elsetInput = reader.result;
+          parseElsetInput();
+          makeXML();
+          var node = document.getElementById('output');
+          node.innerText = JSON.stringify(satInfoArray);
+          node.innerHTML += '<br><br>';
+          node.innerText += JSON.stringify(looksArray);
+        };
+        reader.readAsText(input.files[0]);
+
+        // Change webpage display from wrap1 to wrap2
+        document.getElementById('wrap1').style.display = 'none';
+        document.getElementById('wrap2').style.display = 'block';
+      }
+      function parseElsetInput () {
+        var posnegList = document.getElementById('posnegList');
+        posnegList = posnegList.value;
+        posneg = posnegList.split(',');
+
+        elsetInput = elsetInput.split('\n');
+        var filteredElsets = [];
+        for (var i = 0; i < elsetInput.length / 2; i++) {
+          var tle1 = elsetInput[i * 2];
+          var scc = pad(tle1.substr(2, 5).trim(), 5);
+          for (var s = 0; s < posneg.length; s++) {
+            if (scc === posneg[s]) {
+              filteredElsets.push(elsetInput[i * 2]);
+              filteredElsets.push(elsetInput[i * 2 + 1]);
+            }
+          }
+        }
+        numSats = filteredElsets.length / 2;
+
+        (function parseSatInfo () {
+          for (var i = 0; i < numSats; i++) {
+            var tle1 = filteredElsets[i * 2];
+            var tle2 = filteredElsets[i * 2 + 1];
+            var scc = pad(tle1.substr(2, 5).trim(), 5);
+            var elsetNum = tle1.substr(64, 4).trim();
+
+            var satrec = satellite.twoline2satrec( // perform and store sat init calcs
+                        tle1, tle2);
+            var inclination = satrec.inclo * RAD2DEG;
+            var eccentricity = satrec.ecco;
+            var meanMotion = satrec.no * 60 * 24 / TAU; // convert rads/minute to rev/day
+            var semiMajorAxis = Math.pow(8681663.653 / meanMotion, (2 / 3));
+            var apogee = semiMajorAxis * (1 + eccentricity) - RADIUS_OF_EARTH;
+            var perigee = semiMajorAxis * (1 - eccentricity) - RADIUS_OF_EARTH;
+            var period = MINUTES_PER_DAY / meanMotion;
+
+            satInfoArray.push({
+              satno: scc,
+              inc: inclination,
+              e: eccentricity,
+              meanmo: meanMotion,
+              apogee: apogee,
+              perigee: perigee,
+              period: period,
+              elset: elsetNum});
+          }
+          satInfoArray.sort(function (a, b) { return a.satno - b.satno; });
+        })();
+
+        (function parseLooks () {
+          for (var i = 0; i < numSats; i++) {
+            var tle1 = filteredElsets[i * 2];
+            var tle2 = filteredElsets[i * 2 + 1];
+            getlookangles(tle1, tle2);
+          }
+          looksArray.sort(function (a, b) { return a.time - b.time; });
+          looksAllArray.sort(function (a, b) { return a.time - b.time; });
+        })();
+      }
+      function makeXML () {
+        var xml = document.createElement('xml');
+        var xmlRoot = document.createElement('xmlRoot');
+        xml.appendChild(xmlRoot);
+
+        (function satInfoXML () {
+          var satinfo = document.createElement('satinfo');
+          for (var i = 0; i < satInfoArray.length; i++) {
+            var sat = document.createElement('sat');
+
+            var satno = document.createElement('satno');
+            var satnoText = document.createTextNode(satInfoArray[i].satno);
+            satno.appendChild(satnoText);
+
+            var inc = document.createElement('inc');
+            var incText = document.createTextNode(satInfoArray[i].inc);
+            inc.appendChild(incText);
+
+            var e = document.createElement('e');
+            var eText = document.createTextNode(satInfoArray[i].e);
+            e.appendChild(eText);
+
+            var apogee = document.createElement('apogee');
+            var apogeeText = document.createTextNode(satInfoArray[i].apogee);
+            apogee.appendChild(apogeeText);
+
+            var perigee = document.createElement('perigee');
+            var perigeeText = document.createTextNode(satInfoArray[i].perigee);
+            perigee.appendChild(perigeeText);
+
+            var meanmo = document.createElement('meanmo');
+            var meanmoText = document.createTextNode(satInfoArray[i].meanmo);
+            meanmo.appendChild(meanmoText);
+
+            var period = document.createElement('period');
+            var periodText = document.createTextNode(satInfoArray[i].period);
+            period.appendChild(periodText);
+
+            var elset = document.createElement('elset');
+            var elsetText = document.createTextNode(satInfoArray[i].elset);
+            elset.appendChild(elsetText);
+
+            sat.appendChild(satno);
+            sat.appendChild(inc);
+            sat.appendChild(e);
+            sat.appendChild(apogee);
+            sat.appendChild(perigee);
+            sat.appendChild(meanmo);
+            sat.appendChild(period);
+            sat.appendChild(elset);
+            satinfo.appendChild(sat);
+          }
+          xmlRoot.appendChild(satinfo);
+        })();
+
+        // Used to show in coverage looks
+        (function looksXML () {
+          var looks = document.createElement('looks');
+          for (var i = 0; i < looksArray.length; i++) {
+            var pass = document.createElement('pass');
+
+            var satno2 = document.createElement('satno2');
+            var satnoText = document.createTextNode(looksArray[i].scc);
+            satno2.appendChild(satnoText);
+
+            var time = document.createElement('time');
+            var timeText = document.createTextNode(looksArray[i].time);
+            time.appendChild(timeText);
+
+            var unix = document.createElement('unix');
+            var unixText = document.createTextNode(looksArray[i].unix);
+            unix.appendChild(unixText);
+
+            var az = document.createElement('az');
+            var azText = document.createTextNode(looksArray[i].az);
+            az.appendChild(azText);
+
+            var el = document.createElement('el');
+            var elText = document.createTextNode(looksArray[i].el);
+            el.appendChild(elText);
+
+            var rng = document.createElement('rng');
+            var rngText = document.createTextNode(looksArray[i].rng);
+            rng.appendChild(rngText);
+
+            var rise = document.createElement('rise');
+            var riseText = document.createTextNode(looksArray[i].rise);
+            rise.appendChild(riseText);
+
+            var margF = document.createElement('margF');
+            var margFText = document.createTextNode(looksArray[i].margFast);
+            margF.appendChild(margFText);
+
+            var margE = document.createElement('margE');
+            var margEText = document.createTextNode(looksArray[i].margEl);
+            margE.appendChild(margEText);
+
+            var margT = document.createElement('margT');
+            var margTText = document.createTextNode(looksArray[i].margTIC);
+            margT.appendChild(margTText);
+
+            var farP = document.createElement('farP');
+            var farPText = document.createTextNode(looksArray[i].farPass);
+            farP.appendChild(farPText);
+
+            var fenceT = document.createElement('fenceT');
+            var fenceTText = document.createTextNode(looksArray[i].fenceType);
+            fenceT.appendChild(fenceTText);
+
+            var nkFence = document.createElement('nkFence');
+            var nkFenceText = document.createTextNode(looksArray[i].notKeyed);
+            nkFence.appendChild(nkFenceText);
+
+            pass.appendChild(satno2);
+            pass.appendChild(time);
+            pass.appendChild(unix);
+            pass.appendChild(az);
+            pass.appendChild(el);
+            pass.appendChild(rng);
+            pass.appendChild(rise);
+            pass.appendChild(margF);
+            pass.appendChild(margE);
+            pass.appendChild(margT);
+            pass.appendChild(farP);
+            pass.appendChild(fenceT);
+            pass.appendChild(nkFence);
+            looks.appendChild(pass);
+          }
+          xmlRoot.appendChild(looks);
+        })();
+
+        // Used to show all looks, not just those in coverage
+        (function looksAllXML () {
+          var looksAll = document.createElement('looksAll');
+          for (var i = 0; i < looksAllArray.length; i++) {
+            var pass = document.createElement('pass');
+
+            var satno3 = document.createElement('satno3');
+            var satnoText = document.createTextNode(looksAllArray[i].scc);
+            satno3.appendChild(satnoText);
+
+            var time = document.createElement('time');
+            var timeText = document.createTextNode(looksAllArray[i].time);
+            time.appendChild(timeText);
+
+            var unix = document.createElement('unix');
+            var unixText = document.createTextNode(looksAllArray[i].unix);
+            unix.appendChild(unixText);
+
+            var az = document.createElement('az');
+            var azText = document.createTextNode(looksAllArray[i].az);
+            az.appendChild(azText);
+
+            var el = document.createElement('el');
+            var elText = document.createTextNode(looksAllArray[i].el);
+            el.appendChild(elText);
+
+            var rng = document.createElement('rng');
+            var rngText = document.createTextNode(looksAllArray[i].rng);
+            rng.appendChild(rngText);
+
+            pass.appendChild(satno3);
+            pass.appendChild(time);
+            pass.appendChild(unix);
+            pass.appendChild(az);
+            pass.appendChild(el);
+            pass.appendChild(rng);
+            looksAll.appendChild(pass);
+          }
+
+          xmlRoot.appendChild(looksAll);
+        })();
+
+        // Change webpage display from wrap2 to wrap3
+        document.getElementById('wrap2').style.display = 'none';
+        document.getElementById('wrap3').style.display = 'block';
+
+        var blob = new Blob([xml.innerHTML], {type: 'text/plain;charset=utf-8'});
+        var today = new Date();
+        var year = today.getUTCFullYear();
+        var start = new Date(today.getFullYear(), 0, 0);
+        var diff = today - start;
+        var oneDay = 1000 * 60 * 60 * 24;
+        var day = Math.floor(diff / oneDay);
+        var hour = today.getUTCHours();
+        saveAs(blob, 'SatLooks_' + year.toString() + '_' + day.toString() + '_' + hour.toString() + '.xml');
+        // Only in the CSV version
+        // exportToCSV(looksArray);
+      }
+      function getlookangles (tle1, tle2) {
+        // Load Sensor Parameters
+        var sensor = document.getElementById('selectSensor');
+        sensor = parseInt(sensor.options[sensor.selectedIndex].value);
+        setSensor(sensor);
+
+        // Get orbital parameters using satellite.js
+        var satrec = satellite.twoline2satrec(tle1, tle2);
+
+        // Don't Propagate The Unseeable
+        var eccentricity = satrec.ecco;
+        var meanMotion = satrec.no * 60 * 24 / TAU; // convert rads/minute to rev/day
+        var semiMajorAxis = Math.pow(8681663.653 / meanMotion, (2 / 3));
+        var perigee = semiMajorAxis * (1 - eccentricity) - RADIUS_OF_EARTH;
+        if (perigee > obsmaxrange) return;
+
+        // Get NORAD Id number from TLE1
+        satrec.satnum = pad(tle1.substr(2, 5).trim(), 5);
+
+        // Set interval in seconds for each recorded pass time/location
+        var lookanglesInterval = 5;
+
+        // Initialize variable to store number of pass time/locations for this satellite
+        var tblLength = 0;
+
+        // Setup flags for passes
+        var margFast = false; // False unless range <= 750 detected
+        var notKeyed = false; // False unless first look is > 3 degrees
+        var margTIC = false // False initially and checked at end to confirm pass was > 2 minutes
+        var margEL = true; // True initially unless some part of the pass is > 4 degrees elevation
+        var farPass = false; // False initially and checked at end to confirm pass wasn't always at a long range
+        var passStartTime; // This is set in the propagate function on first valid look
+        var passMinRange = obsmaxrange; // This is set each look to find minimum range (start at max range)
+        var fenceType = 1; // NK fence horizontal or vertical? 0 = Horz 1 = Vert
+
+        var orbitalPeriod = MINUTES_PER_DAY / (satrec.no * MINUTES_PER_DAY / TAU); // Seconds in a day divided by mean motion
+
+        // Loop starting with offset=0 for 2 days at X second interval
+        for (var propTempOffset = 0; propTempOffset < (2 * 24 * 60 * 60); propTempOffset += lookanglesInterval) {
+          // Pass propTempOffset in milliseconds
+          propagate((propTempOffset), satrec);   // Update the table with looks for this 5 second chunk
+        }
+        function propagate (curPropOffset, satrec) {
+          var now = propTime(curPropOffset * 1000, Date.now()); // Set "now" to now + the offset in milliseconds
+          var isInView = false; // In FOV Flag
+          var scc = satrec.satnum;
+          var j = jday(now.getUTCFullYear(),
+          now.getUTCMonth() + 1, // NOTE:, this function requires months in range 1-12.
+          now.getUTCDate(),
+          now.getUTCHours(),
+          now.getUTCMinutes(),
+          now.getUTCSeconds()); // Converts time to jday (TLEs use epoch year/day)
+          j += now.getUTCMilliseconds() * 1.15741e-8; // days per millisecond
+          var gmst = satellite.gstime(j);
+
+          var m = (j - satrec.jdsatepoch) * MINUTES_PER_DAY; // 1440 = minutes_per_day
+          var pv = satellite.sgp4(satrec, m);
+          var positionEcf, lookAngles, azimuth, elevation, rangeSat;
+
+          // This prevents bad pv.position from crashing everything
+          if (typeof pv.position == 'undefined') return;
+
+          positionEcf = satellite.eciToEcf(pv.position, gmst); // pv.position is called positionEci originally
+          lookAngles = satellite.ecfToLookAngles(observerGd, positionEcf);
+          azimuth = lookAngles.azimuth * RAD2DEG;
+          elevation = lookAngles.elevation * RAD2DEG;
+          rangeSat = lookAngles.rangeSat;
+
+          // Calculate if in view (Some sensors "min" is bigger than "max")
+          if (obsminaz > obsmaxaz) {
+            if ((azimuth >= obsminaz || azimuth <= obsmaxaz) && (elevation >= obsminel && elevation <= obsmaxel) && (rangeSat <= obsmaxrange && rangeSat >= obsminrange)) {
+              isInView = true;
+            } else {
+              isInView = false;
+            }
+          } else {
+            if ((azimuth >= obsminaz && azimuth <= obsmaxaz) && (elevation >= obsminel && elevation <= obsmaxel) && (rangeSat <= obsmaxrange && rangeSat >= obsminrange)) {
+              isInView = true;
+            } else {
+              isInView = false;
+            }
+          }
+          if (!isInView) {
+            // If not in view then there is nothing left to do
+            return;
+          }
+          // If it is in view...
+          if (isInView) {
+            // If in coverage, then check to see if it was in
+            // coverage 5 seconds ago, otherwise this is the first
+            // line of coverage
+
+            // Calculate Position 5 seconds ago in eci
+            var now1 = propTime(0 - (5 * 1000), now);
+            var j1 = jday(now1.getUTCFullYear(),
+            now1.getUTCMonth() + 1, // this function requires months in range 1-12 not 0-11
+            now1.getUTCDate(),
+            now1.getUTCHours(),
+            now1.getUTCMinutes(),
+            now1.getUTCSeconds()); // Converts time to jday (TLEs use epoch year/day)
+            j1 += now1.getUTCMilliseconds() * 1.15741e-8; // days per millisecond
+            var gmst1 = satellite.gstime(j1);
+            var m1 = (j1 - satrec.jdsatepoch) * MINUTES_PER_DAY; // 1440 = MINUTES_PER_DAY
+            var pv1 = satellite.sgp4(satrec, m1);
+            var positionEcf1, lookAngles1, azimuth1, elevation1, rangeSat1;
+
+            // if position failed then quit this function
+            if (typeof pv1.position == 'undefined') return;
+
+            positionEcf1 = satellite.eciToEcf(pv1.position, gmst1); // eci coords to ecf at gmst1 time
+            lookAngles1 = satellite.ecfToLookAngles(observerGd, positionEcf1); // look angles from ecf
+            // rename/convert variables to make this easier to read
+            azimuth1 = lookAngles1.azimuth * RAD2DEG;
+            elevation1 = lookAngles1.elevation * RAD2DEG;
+            rangeSat1 = lookAngles1.rangeSat;
+
+
+            // Calculate if it was in view (Some sensors "min" is bigger than "max")
+            if (obsminaz > obsmaxaz) {
+              if ((azimuth1 >= obsminaz || azimuth1 <= obsmaxaz) && (elevation1 >= obsminel && elevation1 <= obsmaxel) && (rangeSat1 <= obsmaxrange && rangeSat1 >= obsminrange)) {
+                isInView1 = true;
+              } else {
+                isInView1 = false;
+              }
+            } else {
+              if ((azimuth1 >= obsminaz && azimuth1 <= obsmaxaz) && (elevation1 >= obsminel && elevation1 <= obsmaxel) && (rangeSat1 <= obsmaxrange && rangeSat1 >= obsminrange)) {
+                isInView1 = true;
+              } else {
+                isInView1 = false;
+              }
+            }
+            // if it wasn't in view...
+            if (!isInView1) {
+              // and it is in view at or below 3, then it is initially marginal for elevation
+              if (elevation <= elevationCriteria) margEL = true;
+
+              // if it starts above 3 degrees then it is over the shoulder
+              if (elevation > 3) {
+                notKeyed = true;
+                fenceType = 0;
+              }
+
+              passStartTime = now;
+              looksArray.push({
+                scc: scc,
+                time: now.toISOString(),
+                unix: new Date(now).getTime() / 1000,
+                az: azimuth.toFixed(0),
+                el: elevation.toFixed(1),
+                rng: rangeSat.toFixed(0),
+                rise: 0});
+            } else {
+              // If it was in coverage, then check to see if it will be in
+              // coverage in 5 seconds, otherwise that was the last
+              // line of coverage
+              now1 = propTime(0 + (5 * 1000), now); // 5 second looks
+              j1 = jday(now1.getUTCFullYear(),
+              now1.getUTCMonth() + 1, // this function requires months in range 1-12 not 0-11
+              now1.getUTCDate(),
+              now1.getUTCHours(),
+              now1.getUTCMinutes(),
+              now1.getUTCSeconds()); // Converts time to jday (TLEs use epoch year/day)
+              j1 += now1.getUTCMilliseconds() * 1.15741e-8; // days per millisecond
+              gmst1 = satellite.gstime(j1);
+
+              m1 = (j1 - satrec.jdsatepoch) * MINUTES_PER_DAY; // 1440 = minutes_per_day
+              pv1 = satellite.sgp4(satrec, m1);
+
+              if (typeof pv1.position == 'undefined') return;
+              positionEcf1 = satellite.eciToEcf(pv1.position, gmst1); // pv.position is called positionEci originally
+              lookAngles1 = satellite.ecfToLookAngles(observerGd, positionEcf1);
+              azimuth1 = lookAngles1.azimuth * RAD2DEG;
+              elevation1 = lookAngles1.elevation * RAD2DEG;
+              rangeSat1 = lookAngles1.rangeSat;
+              if (obsminaz > obsmaxaz) {
+                if ((azimuth1 >= obsminaz || azimuth1 <= obsmaxaz) && (elevation1 >= obsminel && elevation1 <= obsmaxel) && (rangeSat1 <= obsmaxrange && rangeSat1 >= obsminrange)) {
+                  isInView1 = true;
+                } else {
+                  isInView1 = false;
+                }
+              } else {
+                if ((azimuth1 >= obsminaz && azimuth1 <= obsmaxaz) && (elevation1 >= obsminel && elevation1 <= obsmaxel) && (rangeSat1 <= obsmaxrange && rangeSat1 >= obsminrange)) {
+                  isInView1 = true;
+                } else {
+                  isInView1 = false;
+                }
+              }
+              if (!isInView1) {
+                // Check for possible marginal for timeout
+                // using 3 minutes because FOV is expanded
+                if (now - passStartTime < passTicCriteria * 60 * 1000) margTIC = true;
+                if (passMinRange >= farPassCriteria) farPass = true;
+                // if it ends above 3 degrees then it comes towards the radar
+                if (elevation > 3) {
+                  margFast = true; // New Definition of FastSat
+                  fenceType = 0;
+                }
+                looksArray.push({
+                  scc: scc,
+                  time: now.toISOString(),
+                  unix: new Date(now).getTime() / 1000,
+                  az: azimuth.toFixed(0),
+                  el: elevation.toFixed(1),
+                  rng: rangeSat.toFixed(0),
+                  rise: 1,
+                  margFast: margFast,
+                  margEl: margEL,
+                  margTIC: margTIC,
+                  farPass: farPass,
+                  fenceType: fenceType,
+                  notKeyed: notKeyed});
+                // Reset flags for passes
+                margFast = false; // False unless range <= 750 detected
+                notKeyed = false; // False unless first look is > 3 degrees
+                margTIC = false // False initially and checked at end to confirm pass was > 2 minutes
+                margEL = true; // True initially unless some part of the pass is > 4 degrees elevation
+                farPass = false; // False initially and checked at end to confirm pass wasn't always at a long range
+                passMinRange = obsmaxrange; // This is set each look to find minimum range
+                fenceType = 1; // NK fence horizontal or vertical? 0 = Horz 1 = Vert
+                return;
+              }
+            }
+            // Do this for any pass in coverage
+            // if (rangeSat <= 750) margFast = true; // Old Definition of FastSat
+            if (elevation > 4) margEL = false;
+            if (passMinRange > rangeSat) passMinRange = rangeSat;
+            looksAllArray.push({
+              scc: scc,
+              time: now.toISOString(),
+              unix: new Date(now).getTime() / 1000,
+              az: azimuth.toFixed(0),
+              el: elevation.toFixed(1),
+              rng: rangeSat.toFixed(0)});
+          }
+        }
+        function propTime (propOffset2, propRealTime) {
+          'use strict';                                             // May be unnescessary but doesn't hurt anything atm.
+          var now = new Date();                                     // Make a time variable
+          now.setTime(Number(propRealTime) + propOffset2);           // Set the time variable to the time in the future
+          return now;
+        }
+        function jday (year, mon, day, hr, minute, sec) { // from satellite.js
+          'use strict';
+          return (367.0 * year -
+            Math.floor((7 * (year + Math.floor((mon + 9) / 12.0))) * 0.25) +
+            Math.floor(275 * mon / 9.0) +
+            day + 1721013.5 +
+            ((sec / 60.0 + minute) / 60.0 + hr) / 24.0  //  ut in days
+          );
+        }
+      }
+      function setobs (obs) {
+        // Set the Observer Location and variable to convert to RADIANS TODO: Change these to variables received in a method call.
+        latitude = obs.lat;                   // Observer Lattitude - use Google Maps
+        longitude = obs.long;                 // Observer Longitude - use Google Maps
+        height = obs.hei;                     // Observer Height in Km
+        obsminaz = obs.obsminaz;              // Observer min azimuth (satellite azimuth must be greater) left extent looking towards target
+        obsmaxaz = obs.obsmaxaz;              // Observer max azimuth (satellite azimuth must be smaller) right extent looking towards target
+        obsminel = obs.obsminel;              // Observer min elevation
+        obsmaxel = obs.obsmaxel;              // Observer max elevation TODO: Determine if radars with 105deg elevation work correctly
+        obsminrange = obs.obsminrange;        // Observer min range TODO: Determine how to calculate min range with transmit cycle information
+        obsmaxrange = obs.obsmaxrange;        // Observer max range TODO: Determine how to calculate max range with transmit cycle information
+        observerGd = {                        // Array to calculate look angles in propagate()
+          longitude: longitude * DEG2RAD,
+          latitude: latitude * DEG2RAD,
+          height: height * 1                  // Converts from string to number TODO: Find correct way to convert string to integer
+        };
+      }
     </script>
     <title>SPADE Look Angle Tool</title>
     <style>
@@ -265,18 +826,10 @@
           </p>
           <input id="posnegList" type="text" name="fname"><br>
         </div>
-        <div id="downloadFile">
-          <p>
-            Click the button below to download the latest Satellite Catalog file.
-          </p>
-          <button onclick='downloadElset()'>Download Catalog</button><br>
-        </div>
         <div id="selectFile">
           <p>
             Select the most recent Satellite Catalog file.
             </br /> File Located at ..\SPADE\posneg\elsets.
-            </br /><b>OR</b>
-            </br />A manually created catalog of element sets.
           </p>
           <input type='file' accept='text/plain' onchange='openFile(event)'><br>
         </div>
@@ -295,16 +848,14 @@
           </div>
           <div id="close">
             <p>Click "Close" and return to SPADE.
-              <button onclick="self.close()">Close</button>
-            </p>
+              <button onclick="self.close()">Close</button></p>
+            </div>
           </div>
-        </div>
       <div id="footer">
         <p>
           Copyright (C) 2016-2020 Theodore Kruczek<br/>
           theodore.kruczek@gmail.com
         </p>
       </div>
-    </div>
-  </body>
+    </body>
 </html>

@@ -45,7 +45,7 @@
     */
 
     /*
-    Copyright (C) 2016-2020 Theodore Kruczek
+    Copyright (C) 2016-2021 Theodore Kruczek
     All Rights Reserved
 
     Permission is hereby granted, free of charge, to all military, government,
@@ -80,16 +80,480 @@
 
     To extend or renew this license, please contact Theodore Kruczek at theodore.kruczek@gmail.com
     */
-    let license = {};
-    license.COD = 'Cd5';
-    license.CLR = '';
-    license.BLE = '';
-    license.CAV = '';
-    license.FYL = '';
-    license.EGL = '';
-    license.THL = '';
 
-    const TAU=2*Math.PI,DEG2RAD=TAU/360,RAD2DEG=360/TAU,MINUTES_PER_DAY=1440,MILLISECONDS_PER_DAY=1.15741e-8;satSet={},satSet.catalog=[],satSet.getSatByObjNum=function(e){for(let t=0;t<satSet.catalog.length;t++)if(satSet.catalog[t].SCC==e)return satSet.catalog[t]},satellite.findBestPasses=function(e,t){for(var a=e.split(","),n=[],s=0;s<a.length;s++)try{for(var o=satSet.getSatByObjNum(parseInt(a[s])),r=satellite.findBestPass(o,t,0),l=0;l<r.length;l++)n.push(r[l])}catch(e){console.warn(e)}let i=n.sort((e,t)=>t.sortTime-e.sortTime);i.reverse(),i.forEach(function(e){delete e.sortTime});for(let e=0;e<i.length;e++)i[e].startDate=i[e].startDate.toISOString().split("T")[0],i[e].startTime=i[e].startTime.toISOString().split("T")[1].split(".")[0],i[e].stopDate=i[e].stopDate.toISOString().split("T")[0],i[e].stopTime=i[e].stopTime.toISOString().split("T")[1].split(".")[0];saveCsv(i,"bestSatTimes")},satellite.findBestPass=function(e,t,a){t.observerGd={latitude:t.lat*DEG2RAD,longitude:t.long*DEG2RAD,height:parseFloat(t.obshei)},void 0===a&&(a=0);var n=0,s=satellite.twoline2satrec(e.TLE1,e.TLE2),o=[];looksInterval=5,looksLength=7;for(var r=0,l=null,i=null,m=null,g=null,c=t.obsmaxrange,u=0,b=!1,d=!1,h=1440/(1440*s.no/TAU),p=0;p<24*looksLength*60*60;p+=looksInterval)n=1e3*p+a,o.length<=5e3&&(lookanglesRow=v(n,s),"undefined"!=typeof lookanglesRow&&(o.push(lookanglesRow),r=0,l=null,i=null,m=null,g=null,c=t.obsmaxrange,u=0,b=!1,d=!1,p+=60*h*.75));return o;function v(e,a){let n=new Date;n.setTime(Number(Date.now())+e);let s=satellite.getRae(n,a,t);if(satellite.checkIsInFOV(t,s)){let s=new Date;s.setTime(Number(Date.now())+e-1e3*looksInterval),aer1=satellite.getRae(s,a,t);let o=satellite.checkIsInFOV(t,aer1);if(o){if(s.setTime(Number(Date.now())+e+1e3*looksInterval),aer1=satellite.getRae(s,a,t),!(o=satellite.checkIsInFOV(t,aer1))){d=elevation<=3.5,r=Math.min((n-g)/1e3/60*10/8,10);let e=Math.min(u/40*10,10);e-=Math.max((u-50)/5,0),r+=e*=b&&d?2:1,r+=Math.min(9e3/c,10),r-=Math.max((900-c)/10,0);let t=0;try{t=(n-g)/1e3}catch(e){t=0}return{sortTime:g,scc:a.satnum,score:r,startDate:g,startTime:g,startAz:l,startEl:i,startRange:m,stopDate:n,stopTime:n,stopAz:azimuth.toFixed(0),stopEl:elevation.toFixed(1),stopRange:range.toFixed(0),tic:t,minRange:c.toFixed(0),passMaxEl:u.toFixed(1)}}}else elevation<=3.5&&(b=!0),g=n,l=azimuth.toFixed(0),i=elevation.toFixed(1),m=range.toFixed(0);u<elevation&&(u=elevation),c>range&&(c=range)}}},satellite.getRae=function(e,t,a){let n=_jday(e.getUTCFullYear(),e.getUTCMonth()+1,e.getUTCDate(),e.getUTCHours(),e.getUTCMinutes(),e.getUTCSeconds());n+=e.getUTCMilliseconds()*MILLISECONDS_PER_DAY;let s=satellite.gstime(n),o=1440*(n-t.jdsatepoch),r=satellite.sgp4(t,o);try{let e=satellite.eciToEcf(r.position,s),t=satellite.ecfToLookAngles(a.observerGd,e);return azimuth=t.azimuth*RAD2DEG,elevation=t.elevation*RAD2DEG,range=t.rangeSat,{az:azimuth,el:elevation,range:range}}catch(e){return{az:0,el:0,range:0}}},satellite.checkIsInFOV=function(e,t){let a=t.az,n=t.el,s=t.range;return e.obsminaz>e.obsmaxaz?(a>=e.obsminaz||a<=e.obsmaxaz)&&n>=e.obsminel&&n<=e.obsmaxel&&s<=e.obsmaxrange&&s>=e.obsminrange||(a>=e.obsminaz2||a<=e.obsmaxaz2)&&n>=e.obsminel2&&n<=e.obsmaxel2&&s<=e.obsmaxrange2&&s>=e.obsminrange2:a>=e.obsminaz&&a<=e.obsmaxaz&&n>=e.obsminel&&n<=e.obsmaxel&&s<=e.obsmaxrange&&s>=e.obsminrange||a>=e.obsminaz2&&a<=e.obsmaxaz2&&n>=e.obsminel2&&n<=e.obsmaxel2&&s<=e.obsmaxrange2&&s>=e.obsminrange2},$("document").ready(function(){$("#editor-open").on("click",function(e){$("#editor-file").trigger("click")}),"Cd5"==license.COD?$("#selectSensor")[0].innerHTML+='<option value="1">Cape Cod</option>':$("#selectSensor")[0].innerHTML+='<option value="1" disabled>Cape Cod</option>',"Clr1"==license.CLR?$("#selectSensor")[0].innerHTML+='<option value="2">Clear</option>':$("#selectSensor")[0].innerHTML+='<option value="2" disabled>Clear</option>',"Bl2"==license.BLE?$("#selectSensor")[0].innerHTML+='<option value="3">Beale</option>':$("#selectSensor")[0].innerHTML+='<option value="3" disabled>Beale</option>',"Cv3"==license.CAV?$("#selectSensor")[0].innerHTML+='<option value="4">Cavalier</option>':$("#selectSensor")[0].innerHTML+='<option value="4" disabled>Cavalier</option>',"Fyl7"==license.FYL?$("#selectSensor")[0].innerHTML+='<option value="5">Fylingdales</option>':$("#selectSensor")[0].innerHTML+='<option value="5" disabled>Fylingdales</option>',"Gl4"==license.EGL?$("#selectSensor")[0].innerHTML+='<option value="6">Eglin</option>':$("#selectSensor")[0].innerHTML+='<option value="6" disabled>Eglin</option>',"Thl6"==license.THL?$("#selectSensor")[0].innerHTML+='<option value="7">Thule</option>':$("#selectSensor")[0].innerHTML+='<option value="7" disabled>Thule</option>',$("#editor-file").change(function(e){if(window.FileReader){var t=new FileReader;t.onload=function(e){if(2===e.target.readyState)if(e.target.error)console.log("error");else{for(var t=e.target.result.split(/\r?\n/),a=0;a<t.length/2;a++){var n={};n.TLE1=t[2*a],n.TLE2=t[2*a+1],n.SCC=parseInt(n.TLE1.substr(2,5).trim()).toString(),satSet.catalog[a]=n}$("#wrap1").hide(),$("#wrap2").show(),setTimeout(function(){satellite.findBestPasses($("#satList").val(),sensorManager.getSensor($("#selectSensor").val())),$("#wrap2").hide(),$("#wrap3").show()},50)}},t.readAsText(e.target.files[0]),e.preventDefault()}})});let sensorManager={};function _jday(e,t,a,n,s,o){return e?367*e-Math.floor(7*(e+Math.floor((t+9)/12))*.25)+Math.floor(275*t/9)+a+1721013.5+((o/60+s)/60+n)/24:(r=Date.now(),jDayStart=new Date(r.getFullYear(),0,0),jDayDiff=r-jDayStart,Math.floor(jDayDiff/MILLISECONDS_PER_DAY));var r}function saveCsv(e,t){const a=(e,t)=>null===t?"":t,n=Object.keys(e[0]);let s=e.map(e=>n.map(t=>JSON.stringify(e[t],a)).join(","));s.unshift(n.join(",")),s=s.join("\r\n");var o=new Blob([s],{type:"text/plain;charset=utf-8"});saveAs(o,`${t}.csv`)}sensorManager.sensorList={},sensorManager.sensorList.COD={name:"Cape Cod AFS, Massachusetts",shortName:"COD",type:"Phased Array Radar",lat:41.754785,long:-70.539151,obshei:.060966,obsminaz:347,obsmaxaz:227,obsminel:3,obsmaxel:85,obsminrange:200,obsmaxrange:5556,changeObjectInterval:1e3,staticNum:1,linkAEHF:!0,linkWGS:!0,zoom:"leo",url:"http://www.radartutorial.eu/19.kartei/01.oth/karte004.en.html",country:"United States",sun:"No Impact",volume:!1},sensorManager.sensorList.BLE={name:"Beale AFB, California",shortName:"BLE",type:"Phased Array Radar",lat:39.136064,long:-121.351237,obshei:.112,obsminaz:126,obsmaxaz:6,obsminel:3,obsmaxel:85,obsminrange:200,obsmaxrange:5556,changeObjectInterval:1e3,staticNum:0,linkAEHF:!0,linkWGS:!0,zoom:"leo",country:"United States",sun:"No Impact",volume:!1},sensorManager.sensorList.CLR={name:"Clear AFS, Alaska",shortName:"CLR",type:"Phased Array Radar",lat:64.290556,long:-149.186944,obshei:.175,obsminaz:184,obsmaxaz:64,obsminel:3,obsmaxel:85,obsminrange:200,obsmaxrange:5556,changeObjectInterval:1e3,staticNum:2,linkAEHF:!0,linkWGS:!0,zoom:"leo",country:"United States",sun:"No Impact",volume:!1},sensorManager.sensorList.EGL={name:"Eglin AFB, Florida",shortName:"EGL",type:"Phased Array Radar",lat:30.572411,long:-86.214836,obshei:.039,obsminaz:120,obsmaxaz:240,obsminel:3,obsmaxel:105,obsminrange:200,obsmaxrange:2e5,changeObjectInterval:1e3,staticNum:3,zoom:"geo",url:"http://www.radartutorial.eu/19.kartei/01.oth/karte002.en.html",country:"United States",sun:"No Impact",volume:!1},sensorManager.sensorList.FYL={name:"RAF Fylingdales, United Kingdom",shortName:"FYL",type:"Phased Array Radar",lat:54.361758,long:-.670051,obshei:.26,obsminaz:0,obsmaxaz:360,obsminel:3,obsmaxel:85,obsminrange:200,obsmaxrange:5556,changeObjectInterval:1e3,staticNum:4,linkAEHF:!0,linkWGS:!0,zoom:"leo",country:"United Kingdom",sun:"No Impact",volume:!1},sensorManager.sensorList.CAV={name:"Cavalier AFS, North Dakota",shortName:"CAV",type:"Phased Array Radar",lat:48.724567,long:-97.899755,obshei:.352,obsminaz:298,obsmaxaz:78,obsminel:1.9,obsmaxel:95,obsminrange:200,obsmaxrange:3300,changeObjectInterval:1e3,staticNum:5,linkAEHF:!0,zoom:"leo",url:"https://mostlymissiledefense.com/2012/04/12/parcs-cavalier-radar-april-12-2012/",country:"United States",sun:"No Impact",volume:!0},sensorManager.sensorList.THL={name:"Thule AFB, Greenland",shortName:"THL",type:"Phased Array Radar",lat:76.570322,long:-68.299211,obshei:.392,obsminaz:297,obsmaxaz:177,obsminel:3,obsmaxel:85,obsminrange:200,obsmaxrange:5556,changeObjectInterval:1e3,staticNum:6,linkAEHF:!0,linkWGS:!0,zoom:"leo",url:"http://www.radartutorial.eu/19.kartei/01.oth/karte004.en.html",country:"United States",sun:"No Impact",volume:!1},sensorManager.getSensor=function(e){switch(parseInt(e)){case 1:return sensorManager.sensorList.COD;case 2:return sensorManager.sensorList.BLE;case 3:return sensorManager.sensorList.CLR;case 4:return sensorManager.sensorList.EGL;case 5:return sensorManager.sensorList.FYL;case 6:return sensorManager.sensorList.CAV;case 7:return sensorManager.sensorList.THL}},window.sensorManager=sensorManager;
+    // Constants
+    const TAU = 2 * Math.PI;
+    const DEG2RAD = TAU / 360;
+    const RAD2DEG = 360 / TAU;
+    const MINUTES_PER_DAY = 1440;
+    const MILLISECONDS_PER_DAY = 1.15741e-8;
+
+    satSet = {};
+    satSet.catalog = [];
+    satSet.getSatByObjNum = function (objNum) {
+      for (let i = 0; i < satSet.catalog.length; i++) {
+        if (satSet.catalog[i].SCC == objNum) {
+          return satSet.catalog[i];
+        }
+      }
+    }
+    satellite.findBestPasses = function (sats,sensor) {
+     var satArray = sats.split(',');
+     var tableSatTimes = [];
+     for (var i = 0; i < satArray.length; i++) {
+       try {
+         var sat = satSet.getSatByObjNum(parseInt(satArray[i]));
+         var satPasses = satellite.findBestPass(sat, sensor, 0);
+         for (var s = 0; s < satPasses.length; s++) {
+           tableSatTimes.push(satPasses[s]);
+         }
+       } catch (e) {
+         console.warn(e);
+       }
+     }
+     let sortedTableSatTimes = tableSatTimes.sort((a, b) => b.sortTime - a.sortTime);
+     sortedTableSatTimes.reverse();
+
+     sortedTableSatTimes.forEach(function(v){ delete v.sortTime; });
+
+     for (let i = 0; i < sortedTableSatTimes.length; i++) {
+       sortedTableSatTimes[i].startDate = sortedTableSatTimes[i].startDate.toISOString().split('T')[0];
+       sortedTableSatTimes[i].startTime = sortedTableSatTimes[i].startTime.toISOString().split('T')[1].split('.')[0];
+       sortedTableSatTimes[i].stopDate = sortedTableSatTimes[i].stopDate.toISOString().split('T')[0];
+       sortedTableSatTimes[i].stopTime = sortedTableSatTimes[i].stopTime.toISOString().split('T')[1].split('.')[0];
+     }
+
+     let currentDate = new Date();
+
+     saveCsv(sortedTableSatTimes,`bestPasses-${currentDate.toISOString().slice(0,10)}`);
+    };
+    satellite.findBestPass = function (sat, sensor, propOffset) {
+      sensor.observerGd = {   // Array to calculate look angles in propagate()
+        latitude: sensor.lat * DEG2RAD,
+        longitude: sensor.long * DEG2RAD,
+        height: parseFloat(sensor.obshei)
+      };
+     // Set default timing settings. These will be changed to find look angles at different times in future.
+     if (typeof propOffset == 'undefined') propOffset = 0; // Could be used for changing the time start
+     var propTempOffset = 0;               // offset letting us propagate in the future (or past)
+
+     var satrec = satellite.twoline2satrec(sat.TLE1, sat.TLE2);// perform and store sat init calcs
+     var lookanglesTable = [];                                   // Iniially no rows to the table
+
+     looksInterval = 5;
+     looksLength = 7;
+
+     // Setup flags for passes
+     var score = 0;
+     var sAz = null;
+     var sEl = null;
+     var sRange = null;
+     var sTime = null;
+     var passMinRange = sensor.obsmaxrange; // This is set each look to find minimum range (start at max range)
+     var passMaxEl = 0;
+     var start3 = false;
+     var stop3 = false;
+
+     var orbitalPeriod = MINUTES_PER_DAY / (satrec.no * MINUTES_PER_DAY / TAU); // Seconds in a day divided by mean motion
+
+     for (var i = 0; i < (looksLength * 24 * 60 * 60); i += looksInterval) {         // satellite.lookanglesInterval in seconds
+       propTempOffset = i * 1000 + propOffset;                 // Offset in seconds (msec * 1000)
+       if (lookanglesTable.length <= 5000) {                           // Maximum of 1500 lines in the look angles table
+         lookanglesRow = _propagate(propTempOffset, satrec);
+         // If data came back...
+         if (typeof lookanglesRow != 'undefined') {
+           lookanglesTable.push(lookanglesRow);   // Update the table with looks for this 5 second chunk and then increase table counter by 1
+           // Reset flags for next pass
+           score = 0;
+           sAz = null;
+           sEl = null;
+           sRange = null;
+           sTime = null;
+           passMinRange = sensor.obsmaxrange; // This is set each look to find minimum range
+           passMaxEl = 0;
+           start3 = false;
+           stop3 = false;
+           i = i + (orbitalPeriod * 60 * 0.75); // Jump 3/4th to the next orbit
+         }
+       }
+     }
+
+     return lookanglesTable;
+     function _propagate (propTempOffset, satrec) {
+       let now = new Date();                                     // Make a time variable
+       now.setTime(Number(Date.now()) + propTempOffset);           // Set the time variable to the time in the future
+       let aer = satellite.getRae(now, satrec, sensor);
+       let isInFOV = satellite.checkIsInFOV(sensor,aer);
+
+       if (isInFOV) {
+         // Previous Pass to Calculate first line of coverage
+         let now1 = new Date();
+         now1.setTime(Number(Date.now()) + propTempOffset - (looksInterval * 1000));
+         aer1 = satellite.getRae(now1, satrec, sensor);
+
+         let isInFOV1 = satellite.checkIsInFOV(sensor,aer1);
+         if (!isInFOV1) {
+           // if it starts around 3
+           if (elevation <= 3.5) { start3 = true; }
+
+           // First Line of Coverage
+           sTime = now;
+           sAz = azimuth.toFixed(0);
+           sEl = elevation.toFixed(1);
+           sRange = range.toFixed(0);
+         } else {
+           // Next Pass to Calculate Last line of coverage
+           now1.setTime(Number(Date.now()) + propTempOffset + (looksInterval * 1000));
+           aer1 = satellite.getRae(now1, satrec, sensor);
+
+           isInFOV1 = satellite.checkIsInFOV(sensor,aer1);
+           if (!isInFOV1) {
+             // if it stops around 3
+             stop3 = (elevation <= 3.5) ? true : false;
+
+             score = (Math.min((now - sTime) / 1000 / 60 * 10 / 8,10)); // 8 minute pass is max score
+             let elScore = (Math.min(passMaxEl/50*10,10)); // 50 el or above is max score
+            //  elScore -= (Math.max((passMaxEl-50)/5,0)); // subtract points for being over 50 el
+             elScore *= (start3 && stop3) ? 2 : 1; // 2x points for start and stop at 3
+             score += elScore;
+             score += (Math.min(10*750/passMinRange,10)); // 750 or less is max score
+            //  score -= (Math.max((900-passMinRange)/10,0)); // subtract points for being closer than 750
+
+             let tic = 0;
+             try {
+               tic = ((now - sTime)/1000);
+             } catch (e) {
+               tic = 0;
+             }
+
+             // Last Line of Coverage
+             return {
+               sortTime: sTime,
+               scc: satrec.satnum,
+               score: score,
+               startDate: sTime,
+               startTime: sTime,
+               startAz: sAz,
+               startEl: sEl,
+               startRange: sRange,
+               stopDate: now,
+               stopTime: now,
+               stopAz: azimuth.toFixed(0),
+               stopEl: elevation.toFixed(1),
+               stopRange: range.toFixed(0),
+               tic: tic,
+               minRange: passMinRange.toFixed(0),
+               passMaxEl: passMaxEl.toFixed(1)
+             };
+           }
+         }
+         // Do this for any pass in coverage
+         if (passMaxEl < elevation) passMaxEl = elevation;
+         if (passMinRange > range) passMinRange = range;
+       }
+       return;
+     }
+    };
+    satellite.getRae = function (now, satrec, sensor) {
+      let j = _jday(now.getUTCFullYear(),
+      now.getUTCMonth() + 1, // NOTE:, this function requires months in range 1-12.
+      now.getUTCDate(),
+      now.getUTCHours(),
+      now.getUTCMinutes(),
+      now.getUTCSeconds()); // Converts time to jday (TLEs use epoch year/day)
+      j += now.getUTCMilliseconds() * MILLISECONDS_PER_DAY;
+      let gmst = satellite.gstime(j);
+
+      let m = (j - satrec.jdsatepoch) * MINUTES_PER_DAY;
+      let positionEci = satellite.sgp4(satrec, m);
+
+      try {
+        let positionEcf = satellite.eciToEcf(positionEci.position, gmst); // positionEci.position is called positionEci originally
+        let lookAngles = satellite.ecfToLookAngles(sensor.observerGd, positionEcf);
+        azimuth = lookAngles.azimuth * RAD2DEG;
+        elevation = lookAngles.elevation * RAD2DEG;
+        range = lookAngles.rangeSat;
+        return {az: azimuth, el: elevation, range: range};
+      } catch (e) {
+        return {az: 0, el: 0, range: 0};
+      }
+    };
+    satellite.checkIsInFOV = function (sensor,rae) {
+      let azimuth = rae.az;
+      let elevation = rae.el;
+      let range = rae.range;
+
+      if (sensor.obsminaz > sensor.obsmaxaz) {
+        if (((azimuth >= sensor.obsminaz || azimuth <= sensor.obsmaxaz) &&
+             (elevation >= sensor.obsminel && elevation <= sensor.obsmaxel) &&
+             (range <= sensor.obsmaxrange && range >= sensor.obsminrange)) ||
+             ((azimuth >= sensor.obsminaz2 || azimuth <= sensor.obsmaxaz2) &&
+             (elevation >= sensor.obsminel2 && elevation <= sensor.obsmaxel2) &&
+             (range <= sensor.obsmaxrange2 && range >= sensor.obsminrange2))) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        if (((azimuth >= sensor.obsminaz && azimuth <= sensor.obsmaxaz) &&
+             (elevation >= sensor.obsminel && elevation <= sensor.obsmaxel) &&
+             (range <= sensor.obsmaxrange && range >= sensor.obsminrange)) ||
+             ((azimuth >= sensor.obsminaz2 && azimuth <= sensor.obsmaxaz2) &&
+             (elevation >= sensor.obsminel2 && elevation <= sensor.obsmaxel2) &&
+             (range <= sensor.obsmaxrange2 && range >= sensor.obsminrange2))) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    };
+    $('document').ready(function() {
+      $('#editor-open').on("click", function (e) {
+        $('#editor-file').trigger('click');
+      });
+      (function loadSites() {
+        $('#selectSensor')[0].innerHTML += '<option value="1">Cape Cod</option>';
+        $('#selectSensor')[0].innerHTML += '<option value="2">Clear</option>';
+        $('#selectSensor')[0].innerHTML += '<option value="3">Beale</option>';
+        $('#selectSensor')[0].innerHTML += '<option value="4">Cavalier</option>';
+        $('#selectSensor')[0].innerHTML += '<option value="5">Fylingdales</option>';
+        $('#selectSensor')[0].innerHTML += '<option value="6">Eglin</option>';
+        $('#selectSensor')[0].innerHTML += '<option value="7">Thule</option>';
+      })();
+      $('#editor-file').change(function (evt) {
+        if (!window.FileReader) return; // Browser is not compatible
+        var reader = new FileReader();
+
+        reader.onload = function (evt) {
+          if (evt.target.readyState !== 2) return;
+          if (evt.target.error) {
+            console.log('error');
+            return;
+          }
+          var str = evt.target.result;
+          var array = str.split(/\r?\n/);
+          for (var i = 0; i < array.length / 2; i++) {
+            var sat = {};
+            sat.TLE1 = array[i * 2];
+            sat.TLE2 = array[i * 2 + 1];
+            sat.SCC = parseInt(sat.TLE1.substr(2, 5).trim()).toString();
+            satSet.catalog[i] = sat;
+          }
+          $("#wrap1").hide();
+          $("#wrap2").show();
+          setTimeout(function () {
+            satellite.findBestPasses($('#satList').val(),sensorManager.getSensor($('#selectSensor').val()));
+            $("#wrap2").hide();
+            $("#wrap3").show();
+          }, 50);
+        };
+        reader.readAsText(evt.target.files[0]);
+        evt.preventDefault();
+      });
+    });
+    let sensorManager = {};
+    sensorManager.sensorList = {};
+    sensorManager.sensorList.COD = {
+      name: 'Cape Cod AFS, Massachusetts',
+      shortName: 'COD',
+      type: 'Phased Array Radar',
+      lat: 41.754785,
+      long: -70.539151,
+      obshei: 0.060966,
+      obsminaz: 347,
+      obsmaxaz: 227,
+      obsminel: 3,
+      obsmaxel: 85,
+      obsminrange: 200,
+      obsmaxrange: 5556,
+      changeObjectInterval: 1000,
+      staticNum: 1,
+      linkAEHF: true,
+      linkWGS: true,
+      zoom: 'leo',
+      url: 'http://www.radartutorial.eu/19.kartei/01.oth/karte004.en.html',
+      country: 'United States',
+      sun: 'No Impact',
+      volume: false
+    };
+    sensorManager.sensorList.BLE = {
+        name: 'Beale AFB, California',
+        shortName: 'BLE',
+        type: 'Phased Array Radar',
+        lat: 39.136064,
+        long: -121.351237,
+        obshei: 0.1120, // Open Street Maps
+        obsminaz: 126,
+        obsmaxaz: 6,
+        obsminel: 3,
+        obsmaxel: 85,
+        obsminrange: 200,
+        obsmaxrange: 5556,
+        changeObjectInterval: 1000,
+        staticNum: 0,
+        linkAEHF: true,
+        linkWGS: true,
+        zoom: 'leo',
+        country: 'United States',
+        sun: 'No Impact',
+        volume: false
+      };
+    sensorManager.sensorList.CLR = {
+      name: 'Clear AFS, Alaska',
+      shortName: 'CLR',
+      type: 'Phased Array Radar',
+      lat: 64.290556,
+      long: -149.186944,
+      obshei: 0.1750, // Open Street Maps
+      obsminaz: 184,
+      obsmaxaz: 64,
+      obsminel: 3,
+      obsmaxel: 85,
+      obsminrange: 200,
+      obsmaxrange: 5556,
+      changeObjectInterval: 1000,
+      staticNum: 2,
+      linkAEHF: true,
+      linkWGS: true,
+      zoom: 'leo',
+      country: 'United States',
+      sun: 'No Impact',
+      volume: false
+    };
+    sensorManager.sensorList.EGL = {
+      name: 'Eglin AFB, Florida',
+      shortName: 'EGL',
+      type: 'Phased Array Radar',
+      lat: 30.572411,
+      long: -86.214836,
+      obshei: 0.0390, // Open Street Maps
+      obsminaz: 120,
+      obsmaxaz: 240,
+      obsminel: 3,
+      obsmaxel: 105,
+      obsminrange: 200,
+      obsmaxrange: 200000,
+      changeObjectInterval: 1000,
+      staticNum: 3,
+      zoom: 'geo',
+      url: 'http://www.radartutorial.eu/19.kartei/01.oth/karte002.en.html',
+      country: 'United States',
+      sun: 'No Impact',
+      volume: false
+    };
+    sensorManager.sensorList.FYL = {
+      name: 'RAF Fylingdales, United Kingdom',
+      shortName: 'FYL',
+      type: 'Phased Array Radar',
+      lat: 54.361758,
+      long: -0.670051,
+      obshei: 0.2600, // Open Street Maps
+      obsminaz: 0,
+      obsmaxaz: 360,
+      obsminel: 3,
+      obsmaxel: 85,
+      obsminrange: 200,
+      obsmaxrange: 5556,
+      changeObjectInterval: 1000,
+      staticNum: 4,
+      linkAEHF: true,
+      linkWGS: true,
+      zoom: 'leo',
+      country: 'United Kingdom',
+      sun: 'No Impact',
+      volume: false
+    };
+    sensorManager.sensorList.CAV = {
+      name: 'Cavalier AFS, North Dakota',
+      shortName: 'CAV',
+      type: 'Phased Array Radar',
+      lat: 48.724567,
+      long: -97.899755,
+      obshei: 0.3520, // Open Street Maps
+      obsminaz: 298,
+      obsmaxaz: 78,
+      obsminel: 1.9,
+      obsmaxel: 95,
+      obsminrange: 200,
+      obsmaxrange: 3300, // 1,780 Nm http://www.fortwiki.com/Cavalier_Air_Force_Station
+      changeObjectInterval: 1000,
+      staticNum: 5,
+      linkAEHF: true,
+      zoom: 'leo',
+      url: 'https://mostlymissiledefense.com/2012/04/12/parcs-cavalier-radar-april-12-2012/',
+      country: 'United States',
+      sun: 'No Impact',
+      volume: true
+    };
+    sensorManager.sensorList.THL = {
+      name: 'Thule AFB, Greenland',
+      shortName: 'THL',
+      type: 'Phased Array Radar',
+      lat: 76.570322,
+      long: -68.299211,
+      obshei: 0.3920, // Open Street Maps
+      obsminaz: 297,
+      obsmaxaz: 177,
+      obsminel: 3,
+      obsmaxel: 85,
+      obsminrange: 200,
+      obsmaxrange: 5556,
+      changeObjectInterval: 1000,
+      staticNum: 6,
+      linkAEHF: true,
+      linkWGS: true,
+      zoom: 'leo',
+      url: 'http://www.radartutorial.eu/19.kartei/01.oth/karte004.en.html',
+      country: 'United States',
+      sun: 'No Impact',
+      volume: false
+    };
+    sensorManager.getSensor = function (sensorNum) {
+      switch (parseInt(sensorNum)) {
+        case 1:
+          return sensorManager.sensorList.COD;
+        case 2:
+          return sensorManager.sensorList.BLE;
+        case 3:
+          return sensorManager.sensorList.CLR;
+        case 4:
+          return sensorManager.sensorList.EGL;
+        case 5:
+          return sensorManager.sensorList.FYL;
+        case 6:
+          return sensorManager.sensorList.CAV;
+        case 7:
+          return sensorManager.sensorList.THL;
+      }
+    }
+    window.sensorManager = sensorManager;
+    function _jday(year, mon, day, hr, minute, sec) { // from satellite.js
+      if (!year) {
+        // console.error('timeManager.jday should always have a date passed to it!');
+        var now;
+        now = Date.now();
+        jDayStart = new Date(now.getFullYear(), 0, 0);
+        jDayDiff = now - jDayStart;
+        return Math.floor(jDayDiff / MILLISECONDS_PER_DAY);
+      } else {
+        return (367.0 * year -
+          Math.floor((7 * (year + Math.floor((mon + 9) / 12.0))) * 0.25) +
+          Math.floor(275 * mon / 9.0) +
+          day + 1721013.5 +
+          ((sec / 60.0 + minute) / 60.0 + hr) / 24.0  //  ut in days
+        );
+      }
+    }
+    function saveCsv (items,name) {
+      const replacer = (key, value) => value === null ? '' : value; // specify how you want to handle null values here
+      const header = Object.keys(items[0]);
+      let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+      csv.unshift(header.join(','));
+      csv = csv.join('\r\n');
+
+      var blob = new Blob([csv], {type: 'text/plain;charset=utf-8'});
+      saveAs(blob, `${name}.csv`);
+    }
    </script>
    <title>Pass Scoring Tool</title>
    <style>
@@ -102,7 +566,7 @@
          background: RGB(242,242,242);
      }
      #header {
-       background: #00308F
+       background: #00308F;
        color: white;
        margin: 0;
        padding: 0 1em;
@@ -135,7 +599,7 @@
       <div id="selectFile">
         <p>
           Select the most recent Satellite Catalog file.
-          </br /> File Located at ..\SPADE\posneg\elsets.
+          </br /> File Located at ..\DARTS\posneg\elsets.
         </p>
         <button id="editor-open" type="button" name="action">Select TLE File &#9658;</button>
         <input id="editor-file" type="file" name="files[]" style="display: none;" />
@@ -150,10 +614,10 @@
     </div>
     <div id="wrap3">
       <div id="saveas">
-        <p> Save file in ..\SPADE\posneg\satlooks\ folder.<br />Click the arrow next to "Save" on the popup and select "Save As".<br />Locate the file and click save.</p>
+        <p> Save file in ..\DARTS\soi\ folder.<br />Click the arrow next to "Save" on the popup and select "Save As".<br />Locate the file and click save.</p>
       </div>
       <div id="close">
-        <p>Click "Close" and return to SPADE.
+        <p>Click "Close" and return to DARTS.
           <button onclick="self.close()">Close</button>
         </p>
       </div>
