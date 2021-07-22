@@ -78,7 +78,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 
-    To extend or renew this license, please contact Theodore Kruczek at theodore.kruczek@gmail.com
+    To extend this license, please contact Theodore Kruczek at theodore.kruczek@gmail.com
     */
 
     // Constants
@@ -98,11 +98,14 @@
       }
     }
     satellite.findBestPasses = function (sats,sensor) {
+     sats = sats.replace(' ', ',');
      var satArray = sats.split(',');
      var tableSatTimes = [];
      for (var i = 0; i < satArray.length; i++) {
        try {
-         var sat = satSet.getSatByObjNum(parseInt(satArray[i]));
+         let satId = satArray[i];
+         if (typeof satId == 'undefined' || satId == null || satId == '' || satId == ' ') continue;
+         var sat = satSet.getSatByObjNum(parseInt(satId));
          var satPasses = satellite.findBestPass(sat, sensor, 0);
          for (var s = 0; s < satPasses.length; s++) {
            tableSatTimes.push(satPasses[s]);
@@ -622,6 +625,11 @@
         </p>
       </div>
     </div>
-  </div>
-</body>
+    <div id="footer">
+      <p>
+        Copyright (C) 2016-2021 Theodore Kruczek<br/>
+        theodore.kruczek@gmail.com
+      </p>
+    </div>
+  </body>
 </html>
