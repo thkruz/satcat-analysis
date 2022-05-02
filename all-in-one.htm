@@ -88,7 +88,7 @@
             hei: 0.060966, // Open Street Maps
             obsminaz: 347,
             obsmaxaz: 227,
-            obsminel: 3,
+            obsminel: 2.9,
             obsmaxel: 85,
             obsminrange: 200,
             obsmaxrange: 5556
@@ -101,7 +101,7 @@
             hei: 0.060966, // Open Street Maps
             obsminaz: 107,
             obsmaxaz: 227,
-            obsminel: 3,
+            obsminel: 2.9,
             obsmaxel: 85,
             obsminrange: 200,
             obsmaxrange: 5556
@@ -114,7 +114,7 @@
             hei: 0.060966, // Open Street Maps
             obsminaz: 347,
             obsmaxaz: 107,
-            obsminel: 3,
+            obsminel: 2.9,
             obsmaxel: 85,
             obsminrange: 200,
             obsmaxrange: 5556
@@ -127,7 +127,7 @@
             hei: 0.1750, // Open Street Maps
             obsminaz: 184, // 184 -2
             obsmaxaz: 64, // 64 + 2
-            obsminel: 3, // 3
+            obsminel: 2.9, // 3
             obsmaxel: 85,
             obsminrange: 200,
             obsmaxrange: 5556
@@ -140,7 +140,7 @@
             hei: 0.1120, // Open Street Maps
             obsminaz: 126, // 126 - 2
             obsmaxaz: 6, // 6 + 2
-            obsminel: 3, // 3
+            obsminel: 2.9, // 3
             obsmaxel: 85,
             obsminrange: 200,
             obsmaxrange: 5556
@@ -166,7 +166,7 @@
             hei: 0.2600, // Open Street Maps
             obsminaz: 0,
             obsmaxaz: 360,
-            obsminel: 3, // 3
+            obsminel: 2.9, // 3
             obsmaxel: 85,
             obsminrange: 200,
             obsmaxrange: 5556
@@ -179,7 +179,7 @@
             hei: 0.0390, // Open Street Maps
             obsminaz: 120, // 120
             obsmaxaz: 242, // 242
-            obsminel: 3, // 3
+            obsminel: 2.9, // 3
             obsmaxel: 105,
             obsminrange: 200,
             obsmaxrange: 60000
@@ -192,7 +192,7 @@
             hei: 0.3920, // Open Street Maps
             obsminaz: 297, // 297 - 2
             obsmaxaz: 177, // 177 + 2
-            obsminel: 3, // 3
+            obsminel: 2.9, // 3
             obsmaxel: 85,
             obsminrange: 200,
             obsmaxrange: 5556
@@ -433,6 +433,10 @@
           var ticText = document.createTextNode(looksArray[i].tic);
           tic.appendChild(ticText);
 
+          var isTwoFace = document.createElement('isTwoFace');
+          var isTwoFaceText = document.createTextNode(looksArray[i].isTwoFace);
+          isTwoFace.appendChild(isTwoFaceText);
+
           var rise = document.createElement('rise');
           var riseText = document.createTextNode(looksArray[i].rise);
           rise.appendChild(riseText);
@@ -467,6 +471,7 @@
           pass.appendChild(az);
           pass.appendChild(el);
           pass.appendChild(rng);
+          pass.appendChild(isTwoFace);
           pass.appendChild(rise);
           pass.appendChild(tic);
           pass.appendChild(margF);
@@ -576,9 +581,13 @@
       var orbitalPeriod = MINUTES_PER_DAY / (satrec.no * MINUTES_PER_DAY / TAU); // Seconds in a day divided by mean motion
 
       // Loop starting with offset=0 for 2 days at X second interval
+      let isLastPassInView = false;
       for (var propTempOffset = 0; propTempOffset < (2 * 24 * 60 * 60); propTempOffset += lookanglesInterval) {
         // Pass propTempOffset in milliseconds
-        propagate((propTempOffset), satrec);   // Update the table with looks for this 5 second chunk
+        let isCurPassInView = propagate((propTempOffset), satrec);   // Update the table with looks for this 5 second chunk
+        if (isLastPassInView && !isCurPassInView) {
+          propTempOffset += 4 * orbitalPeriod / 5 * 60; // add 4/5th a period in seconds
+        }
       }
       function propagate(curPropOffset, satrec) {
         var now = propTime(curPropOffset * 1000, Date.now()); // Set "now" to now + the offset in milliseconds
@@ -598,7 +607,7 @@
         var positionEcf, lookAngles, azimuth, elevation, rangeSat;
 
         // This prevents bad pv.position from crashing everything
-        if (typeof pv.position == 'undefined') return;
+        if (typeof pv.position == 'undefined') return true;
 
         positionEcf = satellite.eciToEcf(pv.position, gmst); // pv.position is called positionEci originally
         lookAngles = satellite.ecfToLookAngles(observerGd, positionEcf);
@@ -622,7 +631,13 @@
         }
         if (!isInView) {
           // If not in view then there is nothing left to do
-          return;
+          if (elevation < 0) {
+            // If elevation is negative then it is below the horizon
+            return false;
+          } else {
+            // If elevation is positive then it is above the horizon
+            return true;
+          }
         }
         // If it is in view...
         if (isInView) {
@@ -645,7 +660,7 @@
           var positionEcf1, lookAngles1, azimuth1, elevation1, rangeSat1;
 
           // if position failed then quit this function
-          if (typeof pv1.position == 'undefined') return;
+          if (typeof pv1.position == 'undefined') return true;
 
           positionEcf1 = satellite.eciToEcf(pv1.position, gmst1); // eci coords to ecf at gmst1 time
           lookAngles1 = satellite.ecfToLookAngles(observerGd, positionEcf1); // look angles from ecf
@@ -681,6 +696,10 @@
             }
 
             passStartTime = now;
+
+            // Was the last pass less than half a period ago?
+            const isTwoFace = (looksArray[looksArray.length - 1]?.unix > new Date(now).getTime() / 1000 - (orbitalPeriod / 2));
+
             looksArray.push({
               scc: scc,
               time: now.toISOString(),
@@ -688,6 +707,7 @@
               az: azimuth.toFixed(0),
               el: elevation.toFixed(1),
               rng: rangeSat.toFixed(0),
+              isTwoFace: isTwoFace,
               rise: 0
             });
           } else {
@@ -760,7 +780,13 @@
               farPass = false; // False initially and checked at end to confirm pass wasn't always at a long range
               passMinRange = obsmaxrange; // This is set each look to find minimum range
               fenceType = 1; // NK fence horizontal or vertical? 0 = Horz 1 = Vert
-              return;
+              if (elevation < 0) {
+                // If elevation is negative then it is below the horizon
+                return false;
+              } else {
+                // If elevation is positive then it is above the horizon
+                return true;
+              };
             }
           }
           // Do this for any pass in coverage
